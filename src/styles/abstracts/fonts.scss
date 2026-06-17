@@ -1,0 +1,23 @@
+@font-face {
+    font-family: 'Outfit';
+    src: url('/public/fonts/Outfit/Outfit-Bold.ttf');
+    font-weight: 700;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Space Grotesk';
+    src: url('/public/fonts/Space-Grotesk/SpaceGrotesk-Medium.ttf');
+    font-weight: 500;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Space Grotesk';
+    src: url('/public/fonts/Space-Grotesk/SpaceGrotesk-Bold.ttf');
+    font-weight: 700;
+    font-style: normal;
+}
+
+$font-primary: 'Outfit', sans-serif;
+$font-secondary: 'Space Grotesk', sans-serif;

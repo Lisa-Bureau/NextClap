@@ -1,0 +1,14 @@
+@use '../abstracts/colors.scss';
+@use '../abstracts/typography.scss';
+
+body {
+    background-color: colors.$background-color;
+}
+
+button {
+    @include typography.button-text;
+}
+
+a {
+  text-decoration: none;
+}
