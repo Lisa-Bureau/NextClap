@@ -14,7 +14,7 @@ export class MoviesService {
 
     constructor(private http: HttpClient) {}
 
-    private getCurrentWednesday(): Date {
+    getCurrentWednesday(): Date {
         const today = new Date();
         const day = today.getDay();
 

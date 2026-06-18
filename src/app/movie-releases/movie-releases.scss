@@ -1,0 +1,12 @@
+@use 'abstracts/colors' as *;
+@use 'abstracts/typography' as *;
+
+h2 {
+    color: $first-text-color;
+    margin-bottom: 0.5rem;
+}
+
+p {
+    @include subtitle;
+    color: $second-text-color;
+}
