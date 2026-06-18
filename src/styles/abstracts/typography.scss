@@ -15,12 +15,19 @@
 @mixin section-title {
     font-family: fonts.$font-primary;
     font-size: 1.5rem;
-    font-weight: 700;
+    font-weight: 600;
     line-height: 1.2;
 
     @include breakpoints.md {
         font-size: 2rem;
     }
+}
+
+@mixin subtitle {
+    font-family: fonts.$font-primary;
+    font-size: 0.875rem;
+    font-weight: 400;
+    line-height: 1.4;
 }
 
 @mixin card-title {
@@ -41,10 +48,10 @@
     }
 }
 
-@mixin link {
+@mixin link-text {
     font-family: fonts.$font-primary;
     font-size: 0.875rem;
-    font-weight: 700;
+    font-weight: 600;
     line-height: 1.4;
 }
 
@@ -58,7 +65,7 @@
 @mixin button-text {
     font-family: fonts.$font-primary;
     font-size: 0.625rem;
-    font-weight: 700;
+    font-weight: 600;
     line-height: 1.5;
 
     @include breakpoints.md {
