@@ -19,7 +19,7 @@ export class MovieReleases implements OnInit {
   constructor(private moviesService: MoviesService) {}
 
   ngOnInit(): void {
-    this.moviesService.getMovieReleasesFrenchCinema();
+    this.movieReleases$ = this.moviesService.getMovieReleasesFrenchCinema();
     this.startDay = this.moviesService.getCurrentWednesday();
   } 
 }
