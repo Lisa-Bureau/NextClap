@@ -1,1 +1,9 @@
-/* You can add global styles to this file, and also import other style files */
+@use './styles/abstracts/breakpoints.scss';
+@use './styles/abstracts/colors';
+@use './styles/abstracts/fonts';
+@use './styles/abstracts/typography';
+@use './styles/abstracts/radius';
+
+@use './styles/base/reset';
+@use './styles/base/global';
+@use './styles/base/global-typography.scss';

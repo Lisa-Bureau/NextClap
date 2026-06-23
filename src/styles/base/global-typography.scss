@@ -1,0 +1,13 @@
+@use '../abstracts/typography.scss';
+
+h1 {
+    @include typography.title;
+}
+
+h2 {
+    @include typography.section-title;
+}
+
+h3 {
+    @include typography.card-title;
+}
