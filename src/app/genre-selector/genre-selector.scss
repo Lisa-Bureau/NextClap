@@ -1,0 +1,42 @@
+@use 'abstracts/typography' as *;
+@use 'abstracts/breakpoints' as *;
+@use 'abstracts/colors' as *;
+@use 'abstracts/radius' as *;
+
+.movieGenre {
+    width: 85vw;
+    height: 2rem;
+    margin: 0 auto;
+    margin-top: 2rem;
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: scroll;
+
+    &__btn {
+        @include button-text;
+        color: $second-text-color;
+        background-color: transparent;
+        border: 1px solid $border-color;
+        border-radius: $radius-md;
+        padding: 0.75rem 1.5rem;
+        white-space: nowrap;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        transition: color 150ms;
+
+        &--selected {
+            color: $background-color;
+            background-color: $first-text-color;
+            border: none;
+        }
+
+        @include lg {
+            &:not(.movieGenre__btn--selected):hover {
+                border: 1px solid $third-text-color;
+                color: $first-text-color;
+            }
+        }
+    }
+}

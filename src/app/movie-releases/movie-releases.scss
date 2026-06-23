@@ -1,6 +1,7 @@
 @use 'abstracts/colors' as *;
 @use 'abstracts/typography' as *;
 @use 'abstracts/breakpoints' as *;
+@use 'abstracts/radius' as *;
 
 header {
     width: 85vw;
@@ -23,7 +24,7 @@ header {
     width: 85vw;
     grid-template-columns: 1fr;
     gap: 1.5rem;
-    margin: 3rem auto;
+    margin: 2rem auto;
 
     @include md {
         grid-template-columns: repeat(2, 1fr);

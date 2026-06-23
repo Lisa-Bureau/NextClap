@@ -3,6 +3,10 @@
     <p class="subtitle">Sorties du {{startDay | date: "d MMMM yyyy"}}</p>
 </header>
 
+<app-genre-selector
+  (genreSelected)="sortByGenre($event)">
+</app-genre-selector>
+
 <section class="movieGrid">
     @for (movie of movieReleases$ | async; track $index) {
         <app-movie-card [movie]="movie" />

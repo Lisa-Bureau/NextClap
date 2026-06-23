@@ -69,7 +69,7 @@ export class MoviesService {
         );
     }
 
-    getMovieReleasesFrenchCinema(): Observable<Movie[]> {
+    getMovieReleasesFrenchCinema(genreId?: number): Observable<Movie[]> {
 
         return this.genresService.getAllMovieGenre().pipe(
 
@@ -100,6 +100,9 @@ export class MoviesService {
                         results
                             .filter(({ dates }) =>
                                 this.isFrenchCinema(dates, releaseDate)
+                            )
+                            .filter(({ movie }) => 
+                                !genreId || movie.genre_ids.includes(genreId)
                             )
                             .map(({ movie }) => ({
                                 ...movie,
