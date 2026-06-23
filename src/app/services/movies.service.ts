@@ -1,10 +1,11 @@
 import { Injectable } from "@angular/core";
-import { forkJoin, map, Observable, switchMap } from "rxjs";
+import { forkJoin, map, Observable, switchMap, tap } from "rxjs";
 import { HttpClient } from "@angular/common/http";
 import { Movie } from "../models/movie";
 import { environment } from '../../environments/environment';
 import { DiscoverMoviesResponse } from "../models/discover-movies-response";
 import { ReleaseDatesResponse } from "../models/release-dates-response";
+import { GenresService } from "./genres.service";
 
 @Injectable({
     providedIn: "root"
@@ -12,7 +13,8 @@ import { ReleaseDatesResponse } from "../models/release-dates-response";
 
 export class MoviesService {
 
-    constructor(private http: HttpClient) {}
+    constructor(private http: HttpClient, 
+                private genresService: GenresService) {}
 
     getCurrentWednesday(): Date {
         const today = new Date();
@@ -69,12 +71,22 @@ export class MoviesService {
 
     getMovieReleasesFrenchCinema(): Observable<Movie[]> {
 
-        const releaseDay = this.getCurrentWednesday();
-        const releaseDate = this.formatDate(releaseDay);
+        return this.genresService.getAllMovieGenre().pipe(
 
-        return this.getMovieReleases().pipe(
+            tap(genres =>
+                this.genresService.setGenres(genres)
+            ),
+
+            switchMap(genre =>
+                this.getMovieReleases()
+            ),
+
             switchMap(response => {
-                const requests = response.results.map(movie => 
+
+                const releaseDay = this.getCurrentWednesday();
+                const releaseDate = this.formatDate(releaseDay);
+
+                const requests = response.results.map(movie =>
                     this.getReleaseDates(movie.id).pipe(
                         map(dates => ({
                             movie,
@@ -83,14 +95,19 @@ export class MoviesService {
                     )
                 );
 
-                return forkJoin(requests);
-            }),
-            map(results =>
-                results
-                    .filter(({dates}) => this.isFrenchCinema(dates, releaseDate))
-                    .map(({movie}) => movie)
-            )
-        )
+                return forkJoin(requests).pipe(
+                    map(results =>
+                        results
+                            .filter(({ dates }) =>
+                                this.isFrenchCinema(dates, releaseDate)
+                            )
+                            .map(({ movie }) => ({
+                                ...movie,
+                                genres: this.genresService.getGenreNames(movie.genre_ids)
+                            }))
+                    )
+                );
+            })
+        );
     }
-
 }

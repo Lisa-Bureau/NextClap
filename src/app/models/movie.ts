@@ -2,6 +2,7 @@ export interface Movie {
     adult: boolean,
     backdrop_path: string,
     genre_ids: number[],
+    genres: string[],
     id: number,
     title: string,
     original_language: string,
