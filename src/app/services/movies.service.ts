@@ -1,9 +1,9 @@
 import { Injectable } from "@angular/core";
-import { forkJoin, map, Observable, switchMap, tap } from "rxjs";
+import { EMPTY, expand, forkJoin, map, Observable, reduce, switchMap, tap } from "rxjs";
 import { HttpClient } from "@angular/common/http";
-import { Movie } from "../models/movie";
+import { DiscoverMoviesResponse, Movie } from "../models/movie";
 import { environment } from '../../environments/environment';
-import { DiscoverMoviesResponse } from "../models/discover-movies-response";
+import { MoviesReponse } from "../models/movie";
 import { ReleaseDatesResponse } from "../models/release-dates-response";
 import { GenresService } from "./genres.service";
 
@@ -16,6 +16,10 @@ export class MoviesService {
     constructor(private http: HttpClient, 
                 private genresService: GenresService) {}
 
+    /**
+     * Calcule la date du mercredi de la semaine en cours (jour officiel des sorties cinéma en France).
+     * @returns {Date} Objet Date correspondant au mercredi de la semaine actuelle.
+     */
     getCurrentWednesday(): Date {
         const today = new Date();
         const day = today.getDay();
@@ -28,89 +32,151 @@ export class MoviesService {
         return wednesday;
     }
 
+    /**
+     * Calcule le mercredi de la semaine prochaine.
+     */
+    getNextWednesday(): Date {
+        const currentWednesday = this.getCurrentWednesday();
+        const nextWednesday = new Date(currentWednesday);
+        nextWednesday.setDate(currentWednesday.getDate() + 7);
+        
+        return nextWednesday;
+    }
+
+    /**
+     * Calcule la date de fin de la fourchette de recherche (Mercredi prochain + 1 mois).
+     */
+    getNextMonth(): Date {
+        const endMonth = new Date(this.getNextWednesday());
+        endMonth.setMonth(endMonth.getMonth() + 1);
+
+        return endMonth;
+    }
+
+    /**
+     * Convertit un objet Date au format standard attendu par TMDB (YYYY-MM-DD).
+     */
     private formatDate(date: Date): string {
         return date.toISOString().split('T')[0];
     }
 
-    getMovieReleases(): Observable<DiscoverMoviesResponse> {
-        const releaseDay = this.getCurrentWednesday();
-        
-        return this.http.get<DiscoverMoviesResponse>(`${environment.tmdbUrl}/discover/movie`, {
-            headers: {
-                Authorization: `Bearer ${environment.tmdbToken}`
-            },
-            params: {
-                language: 'fr-FR',
-                region: 'FR',
-                'primary_release_date.gte': this.formatDate(releaseDay),
-                'primary_release_date.lte': this.formatDate(releaseDay),
-                page: '1'
-            }
-        })
-    }
-    
-    getReleaseDates(movieId: number): Observable<ReleaseDatesResponse> {
-        return this.http.get<ReleaseDatesResponse>(`${environment.tmdbUrl}/movie/${movieId}/release_dates`, {
-            headers: {
-                Authorization: `Bearer ${environment.tmdbToken}`
-            }
-        })
-    }
+    /**
+     * Gère la pagination récursive pour extraire l'intégralité du catalogue d'un endpoint TMDB.
+     * @param {any} params - Critères de filtrage à envoyer à l'API Discover.
+     * @returns {Observable<DiscoverMoviesResponse>} Flux contenant la totalité des films cumulés.
+     * @private
+     */
+    private fetchAllPages(params: any): Observable<DiscoverMoviesResponse> {
+        // Fonction utilitaire locale pour factoriser la configuration des requêtes HTTP par page
+        const makeRequest = (page: number) => {
+            return this.http.get<DiscoverMoviesResponse>(`${environment.tmdbUrl}/discover/movie`, {
+                headers: { Authorization: `Bearer ${environment.tmdbToken}` },
+                params: { ...params, page: page.toString() }
+            });
+        };
 
-    private isFrenchCinema(releaseDates: ReleaseDatesResponse, expectedDate: string): boolean {
-        const france = releaseDates.results.find(r => r.iso_3166_1 === 'FR');
+        // Initialisation de la récursion à la page 1
+        return makeRequest(1).pipe(
+            // Boucle récursive : tant qu'il reste des pages, on charge la page suivante, sinon on coupe le flux (EMPTY)
+            expand(response => response.page < response.total_pages ? makeRequest(response.page + 1) : EMPTY),
 
-        if (!france) {
-            return false;
-        }
-
-        return france.release_dates.some(
-            r => r.type === 3 && r.release_date.startsWith(expectedDate)
+            // Accumulateur : attend la fin de la récursion pour fusionner tous les tableaux 'results' en un seul objet
+            reduce((acc, current) => ({
+                ...acc,
+                results: [...acc.results, ...current.results]
+            }))
         );
     }
 
+    /**
+     * Applique un tri de sécurité drastique sur les données brutes de TMDB.
+     * L'API TMDB incluant des ressorties de vieux films, des fiches incomplètes ou non traduites,
+     * ce nettoyage garantit la pertinence du catalogue "Salles de cinéma actuelles".
+     * @param {Movie[]} movies - Tableau de films bruts issus de l'API.
+     * @param {number} [genreId] - ID optionnel du genre à filtrer.
+     * @param {Date} [targetDate] - Date de référence pour valider l'année de sortie.
+     * @returns {Movie[]} Tableau filtré, nettoyé et documenté avec le nom des genres.
+     * @private
+     */
+    private mapAndFilterGenres(movies: Movie[], genreId?: number, targetDate?: Date): Movie[] {
+        const currentYear = targetDate ? targetDate.getFullYear() : new Date().getFullYear();
+
+        return movies
+            // 1. Cohérence des données : Élimination des fiches fantômes sans titre
+            .filter(movie => movie.title && movie.title.trim() !== '')
+
+            // 2. Localisation linguistique : Exclusion des titres en caractères non-latins (arabe, cyrillique, asiatique...)
+            // car TMDB manque parfois de traductions françaises sur les films très spécifiques.
+            .filter(movie => {
+                const latinRegex = /^[a-zA-Z0-9\s\.,;:!\?'"«»À-ÖØ-öø-ÿ\-\(\)&€\$€’]+$/;
+                return latinRegex.test(movie.title);
+            })
+
+            // 3. Qualité de contenu : Un film distribué en salle possède obligatoirement un résumé en français.
+            .filter(movie => movie.overview && movie.overview.trim().length > 10)
+
+            // 4. Exclusion des ressorties : Évite que des classiques (ex: 1965, 1996) restaurés en salle 
+            // ne polluent les nouveautés de l'année. On tolère N et N-1.
+            .filter(movie => {
+                if (!movie.release_date) return false;
+                const movieYear = new Date(movie.release_date).getFullYear();
+                return movieYear === currentYear || movieYear === (currentYear - 1);
+            })
+
+            // 5. Filtre utilisateur : Sélection optionnelle par genre cinématographique
+            .filter(movie => !genreId || movie.genre_ids.includes(genreId))
+
+            // 6. Mapping : Remplacement des IDs de genres anonymes par leurs libellés textuels (ex: "Action")
+            .map(movie => ({
+                ...movie,
+                genres: this.genresService.getGenreNames(movie.genre_ids)
+            }));
+    }
+
+    /**
+     * Récupère les films sortis nationalement au cinéma le mercredi de la semaine en cours.
+     * Utilise switchMap pour annuler automatiquement les requêtes obsolètes en cas de clics rapides.
+     * @param {number} [genreId] - ID du genre pour le filtrage optionnel.
+     * @returns {Observable<Movie[]>} Flux de films à venir nettoyés et filtrés.
+     */
     getMovieReleasesFrenchCinema(genreId?: number): Observable<Movie[]> {
+        
+        const currentWednesday = this.getCurrentWednesday();
+        
+        return this.genresService.getAllMovieGenre().pipe(
+            tap(genres => this.genresService.setGenres(genres)),
+            switchMap(() => this.fetchAllPages({
+                language: 'fr-FR',
+                region: 'FR',
+                with_release_type: '3', // Code 3 = Sortie nationale en salle uniquement
+                'release_date.gte': this.formatDate(currentWednesday), 
+                'release_date.lte': this.formatDate(currentWednesday)
+            })),
+            map(response => this.mapAndFilterGenres(response.results, genreId, currentWednesday))
+        );
+    }
+
+    /**
+     * Récupère les films qui vont sortir nationalement au cinéma entre le mercredi de la semaine suivante et le mois d'après.
+     * Utilise switchMap pour annuler automatiquement les requêtes obsolètes en cas de clics rapides.
+     * @param {number} [genreId] - ID du genre pour le filtrage optionnel.
+     * @returns {Observable<Movie[]>} Flux de films à venir nettoyés et filtrés.
+     */
+    getUpcomingFrenchCinemaMovies(genreId?: number): Observable<Movie[]> {
+
+        const startDate = this.getNextWednesday();
+        const endDate = this.getNextMonth(); 
 
         return this.genresService.getAllMovieGenre().pipe(
-
-            tap(genres =>
-                this.genresService.setGenres(genres)
-            ),
-
-            switchMap(genre =>
-                this.getMovieReleases()
-            ),
-
-            switchMap(response => {
-
-                const releaseDay = this.getCurrentWednesday();
-                const releaseDate = this.formatDate(releaseDay);
-
-                const requests = response.results.map(movie =>
-                    this.getReleaseDates(movie.id).pipe(
-                        map(dates => ({
-                            movie,
-                            dates
-                        }))
-                    )
-                );
-
-                return forkJoin(requests).pipe(
-                    map(results =>
-                        results
-                            .filter(({ dates }) =>
-                                this.isFrenchCinema(dates, releaseDate)
-                            )
-                            .filter(({ movie }) => 
-                                !genreId || movie.genre_ids.includes(genreId)
-                            )
-                            .map(({ movie }) => ({
-                                ...movie,
-                                genres: this.genresService.getGenreNames(movie.genre_ids)
-                            }))
-                    )
-                );
-            })
+            tap(genres => this.genresService.setGenres(genres)),
+            switchMap(() => this.fetchAllPages({
+                language: 'fr-FR',
+                region: 'FR',
+                with_release_type: '3', // Code 3 = Sortie nationale en salle uniquement
+                'release_date.gte': this.formatDate(startDate), 
+                'release_date.lte': this.formatDate(endDate)  
+            })),
+            map(response => this.mapAndFilterGenres(response.results, genreId, startDate))
         );
     }
 }
