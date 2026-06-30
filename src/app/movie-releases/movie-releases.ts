@@ -4,6 +4,7 @@ import { Movie } from '../models/movie';
 import { MoviesService } from '../services/movies.service';
 import { DatePipe } from '@angular/common';
 import { MovieList } from '../movie-list/movie-list';
+import { DateUtilsService } from '../services/date-utils.service';
 
 @Component({
   selector: 'app-movie-releases',
@@ -16,7 +17,8 @@ export class MovieReleases implements OnInit {
   movieReleases$!: Observable<Movie[]>;
   startDay!: Date;
   
-  constructor(private moviesService: MoviesService) {};
+  constructor(private moviesService: MoviesService,
+              private dateUtilsService: DateUtilsService) {};
 
   sortByGenre(genreId?: number): void {
     this.movieReleases$ = this.moviesService.getMovieReleasesFrenchCinema(genreId);
@@ -29,7 +31,7 @@ export class MovieReleases implements OnInit {
   ngOnInit(): void {
     this.movieReleases$ = this.moviesService.getMovieReleasesFrenchCinema();
 
-    this.startDay = this.moviesService.getCurrentWednesday();
+    this.startDay = this.dateUtilsService.getCurrentWednesday();
   } 
 
 }

@@ -5,6 +5,7 @@ import { DatePipe } from '@angular/common';
 import { Observable } from 'rxjs';
 import { Movie } from '../models/movie';
 import { MovieList } from '../movie-list/movie-list';
+import { DateUtilsService } from '../services/date-utils.service';
 
 @Component({
   selector: 'app-upcoming-movie-releases',
@@ -18,7 +19,8 @@ export class UpcomingMovieReleases implements OnInit{
   endDay!: Date;
   movieUpcoming$!: Observable<Movie[]>;
 
-  constructor (private moviesServise: MoviesService, genresServices: GenresService) {};  
+  constructor (private moviesServise: MoviesService,
+               private dateUtilsService: DateUtilsService) {};  
 
   sortByGenre(genreId?: number): void {
     this.movieUpcoming$ = this.moviesServise.getUpcomingFrenchCinemaMovies(genreId);
@@ -29,8 +31,8 @@ export class UpcomingMovieReleases implements OnInit{
   }
 
   ngOnInit(): void {
-    this.startDay = this.moviesServise.getNextWednesday();
-    this.endDay = this.moviesServise.getNextMonth();
+    this.startDay = this.dateUtilsService.getNextWednesday();
+    this.endDay = this.dateUtilsService.getNextMonth();
     this.movieUpcoming$ = this.moviesServise.getUpcomingFrenchCinemaMovies();
     }
 }
