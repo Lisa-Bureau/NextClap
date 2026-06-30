@@ -1,0 +1,6 @@
+<app-movie-list
+    title="Les Sorties À Venir"
+    [subtitle]="'Les sorties du ' + (startDay | date:'d MMMM yyyy') + ' au ' + (endDay | date:'d MMMM yyyy')"
+    [movies$]="movieUpcoming$"
+    (genreSelected)="sortByGenre($event)">   
+</app-movie-list>
