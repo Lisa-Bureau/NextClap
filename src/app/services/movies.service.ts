@@ -1,9 +1,8 @@
 import { Injectable } from "@angular/core";
-import { EMPTY, expand, forkJoin, map, Observable, reduce, switchMap, tap } from "rxjs";
+import { EMPTY, expand, filter, forkJoin, map, Observable, reduce, switchMap, tap } from "rxjs";
 import { HttpClient } from "@angular/common/http";
 import { DiscoverMoviesResponse, Movie } from "../models/movie";
 import { environment } from '../../environments/environment';
-import { MoviesReponse } from "../models/movie";
 import { ReleaseDatesResponse } from "../models/release-dates-response";
 import { GenresService } from "./genres.service";
 
@@ -61,6 +60,37 @@ export class MoviesService {
     }
 
     /**
+     * Génère un tableau de dates (au format string YYYY-MM-DD) espacées de 7 jours 
+     * entre une date de départ et une date de fin.
+     * @param {Date} startDate - La date pivot de départ (ex: ce mercredi)
+     * @param {Date} endDate - La date limite (ex: dans 30 jours)
+     * @returns {string[]} Tableau contenant les dates formatées (ex: ['2026-07-01', '2026-07-08', ...])
+     */
+    getWednesdaysUpcomingList(startDate: Date, endDate: Date): string[] {
+        const datesArray: string[] = [];
+        
+        // 1. On crée une copie pour ne pas modifier la date d'origine par erreur
+        let currentCursor = new Date(startDate);
+
+        // Valeur en millisecondes d'une semaine (7 jours * 24h * 60m * 60s * 1000ms)
+        const ONE_WEEK_IN_MS = 7 * 24 * 60 * 60 * 1000;
+
+        // 2. Tant que notre curseur n'a pas dépassé la date de fin
+        while (currentCursor.getTime() <= endDate.getTime()) {
+            
+            // On formate la date du curseur actuel et on l'ajoute au tableau
+            const formattedDate = this.formatDate(currentCursor);
+            datesArray.push(formattedDate);
+
+            // 3. LA MAGIE : On fait avancer le curseur de 7 jours en passant par les millisecondes
+            const nextWeekTime = currentCursor.getTime() + ONE_WEEK_IN_MS;
+            currentCursor = new Date(nextWeekTime);
+        }
+
+        return datesArray;
+    }
+
+    /**
      * Gère la pagination récursive pour extraire l'intégralité du catalogue d'un endpoint TMDB.
      * @param {any} params - Critères de filtrage à envoyer à l'API Discover.
      * @returns {Observable<DiscoverMoviesResponse>} Flux contenant la totalité des films cumulés.
@@ -95,10 +125,11 @@ export class MoviesService {
      * @param {Movie[]} movies - Tableau de films bruts issus de l'API.
      * @param {number} [genreId] - ID optionnel du genre à filtrer.
      * @param {Date} [targetDate] - Date de référence pour valider l'année de sortie.
+     * @param {string[]} [releaseDates] - Tableau des dates de sortie du mois.
      * @returns {Movie[]} Tableau filtré, nettoyé et documenté avec le nom des genres.
      * @private
      */
-    private mapAndFilterGenres(movies: Movie[], genreId?: number, targetDate?: Date): Movie[] {
+    private mapAndFilterGenres(movies: Movie[], genreId?: number, targetDate?: Date, releaseDates?: string[]): Movie[] {
         const currentYear = targetDate ? targetDate.getFullYear() : new Date().getFullYear();
 
         return movies
@@ -120,7 +151,13 @@ export class MoviesService {
             .filter(movie => {
                 if (!movie.release_date) return false;
                 const movieYear = new Date(movie.release_date).getFullYear();
-                return movieYear === currentYear || movieYear === (currentYear - 1);
+                return movieYear === currentYear;
+            })
+
+            // Si on a fourni une liste de mercredis spécifiques, on vérifie si la date du film y figure
+            .filter(movie => {
+                if (!releaseDates) return true; // Si pas de liste fournie (ex: sur d'autres pages), on laisse passer
+                return releaseDates.includes(movie.release_date.toString());
             })
 
             // 5. Filtre utilisateur : Sélection optionnelle par genre cinématographique
@@ -166,6 +203,7 @@ export class MoviesService {
 
         const startDate = this.getNextWednesday();
         const endDate = this.getNextMonth(); 
+        const releaseDates = this.getWednesdaysUpcomingList(startDate, endDate);
 
         return this.genresService.getAllMovieGenre().pipe(
             tap(genres => this.genresService.setGenres(genres)),
@@ -176,7 +214,7 @@ export class MoviesService {
                 'release_date.gte': this.formatDate(startDate), 
                 'release_date.lte': this.formatDate(endDate)  
             })),
-            map(response => this.mapAndFilterGenres(response.results, genreId, startDate))
+            map(response => this.mapAndFilterGenres(response.results, genreId, startDate, releaseDates)),
         );
     }
 }
