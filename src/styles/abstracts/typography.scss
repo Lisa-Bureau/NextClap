@@ -50,9 +50,13 @@
 
 @mixin link-text {
     font-family: fonts.$font-primary;
-    font-size: 0.875rem;
+    font-size: 1rem;
     font-weight: 600;
-    line-height: 1.4;
+    line-height: 1.2;
+
+    @include breakpoints.lg {
+        font-size: 1.125rem;
+    }
 }
 
 @mixin card-info {
