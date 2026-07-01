@@ -1,0 +1,36 @@
+@use 'abstracts/colors' as *;
+@use 'abstracts/typography' as *;
+@use 'abstracts/breakpoints' as *;
+@use 'abstracts/radius' as *;
+
+header {
+    width: 85vw;
+    margin: 0 auto;
+    margin-top: 8.5rem;
+}
+
+.title {
+    color: $first-text-color;
+    margin-bottom: 0.5rem;
+}
+
+.subtitle {
+    @include subtitle;
+    color: $second-text-color;
+}
+
+.movieGrid {
+    display: grid;
+    width: 85vw;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    margin: 2rem auto;
+
+    @include md {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    @include lg {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}

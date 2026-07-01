@@ -1,14 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { map, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 import { Movie } from '../models/movie';
 import { MoviesService } from '../services/movies.service';
-import { AsyncPipe, DatePipe } from '@angular/common';
-import { MovieCard } from '../movie-card/movie-card';
-import { GenreSelector } from '../genre-selector/genre-selector';
+import { DatePipe } from '@angular/common';
+import { MovieList } from '../movie-list/movie-list';
+import { DateUtilsService } from '../services/date-utils.service';
 
 @Component({
   selector: 'app-movie-releases',
-  imports: [DatePipe, AsyncPipe, MovieCard, GenreSelector],
+  imports: [DatePipe, MovieList],
   templateUrl: './movie-releases.html',
   styleUrl: './movie-releases.scss',
 })
@@ -17,9 +17,10 @@ export class MovieReleases implements OnInit {
   movieReleases$!: Observable<Movie[]>;
   startDay!: Date;
   
-  constructor(private moviesService: MoviesService) {};
+  constructor(private moviesService: MoviesService,
+              private dateUtilsService: DateUtilsService) {};
 
-  sortByGenre(genreId?: number): void {
+  filterByGenre(genreId?: number): void {
     this.movieReleases$ = this.moviesService.getMovieReleasesFrenchCinema(genreId);
   }
 
@@ -30,7 +31,7 @@ export class MovieReleases implements OnInit {
   ngOnInit(): void {
     this.movieReleases$ = this.moviesService.getMovieReleasesFrenchCinema();
 
-    this.startDay = this.moviesService.getCurrentWednesday();
+    this.startDay = this.dateUtilsService.getCurrentWednesday();
   } 
 
 }
