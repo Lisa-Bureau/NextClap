@@ -3,7 +3,6 @@ import { EMPTY, expand, filter, forkJoin, map, Observable, reduce, switchMap, ta
 import { HttpClient } from "@angular/common/http";
 import { DiscoverMoviesResponse, Movie } from "../models/movie";
 import { environment } from '../../environments/environment';
-import { ReleaseDatesResponse } from "../models/release-dates-response";
 import { GenresService } from "./genres.service";
 import { DateUtilsService } from "./date-utils.service";
 
@@ -56,12 +55,12 @@ export class MoviesService {
      * @returns {Movie[]} Tableau filtré, nettoyé et documenté avec le nom des genres.
      * @private
      */
-    private mapAndFilterGenres(movies: Movie[], genreId?: number, targetDate?: Date, releaseDates?: string[]): Movie[] {
+    private mapAndFilterGenres(movies: Movie[], genreId?: number, targetDate?: Date, releaseDates?: string[], minPopularity?: number): Movie[] {
         const currentYear = targetDate ? targetDate.getFullYear() : new Date().getFullYear();
 
         return movies
             // 1. Cohérence des données : Élimination des fiches sans titre
-            .filter(movie => movie.title && movie.title.trim() !== '')
+            .filter(movie => movie.title?.trim() !== '')
 
             // 2. Localisation linguistique : Exclusion des titres en caractères non-latins (arabe, cyrillique, asiatique...)
             // car TMDB manque parfois de traductions françaises sur les films très spécifiques.
@@ -88,6 +87,20 @@ export class MoviesService {
             .filter(movie => {
                 if (!releaseDates) return true; // Si pas de liste fournie (ex: sur d'autres pages), on laisse passer
                 return releaseDates.includes(movie.release_date.toString());
+            })
+
+            .filter(movie => {
+                if (!minPopularity) return true;
+
+                // Condition A : Le film a un très gros score (ex: > 5), on le garde direct (peu importe sa date)
+                const isBigMovieStillPlaying = movie.popularity > minPopularity;
+
+                // Condition B : Le film a un score plus modeste mais sort pile CE mercredi (aujourd'hui)
+                const isNewReleaseThisWeek = movie.popularity > 0.5 && 
+                                            movie.release_date.toString() === this.dateUtilsService.formatDate(this.dateUtilsService.getCurrentWednesday());
+
+                // On garde le film s'il valide la condition A OU la condition B
+                return isBigMovieStillPlaying || isNewReleaseThisWeek;
             })
 
             // 7. Filtre utilisateur : Sélection optionnelle par genre cinématographique
@@ -145,6 +158,32 @@ export class MoviesService {
                 'release_date.lte': this.dateUtilsService.formatDate(endDate)  
             })),
             map(response => this.mapAndFilterGenres(response.results, genreId, startDate, releaseDates)),
+        );
+    }
+
+    /**
+     * Récupère les films sont à l'affiche entre le mercredi 12 semaines avant et le mercredi de la semaine en cours.
+     * Utilise switchMap pour annuler automatiquement les requêtes obsolètes en cas de clics rapides.
+     * @param {number} [genreId] - ID du genre pour le filtrage optionnel.
+     * @returns {Observable<Movie[]>} Flux de films à venir nettoyés et filtrés.
+     */
+    getNowPlayingFrenchCinemaMovies(genreId?: number): Observable<Movie[]> {
+
+        const startDate = this.dateUtilsService.getPreviousWednesday();
+        const endDate = this.dateUtilsService.getCurrentWednesday(); 
+        const releaseDates = this.dateUtilsService.getWednesdaysUpcomingList(startDate, endDate);
+        const minPopularity = 5;
+
+        return this.genresService.getAllMovieGenre().pipe(
+            tap(genres => this.genresService.setGenres(genres)),
+            switchMap(() => this.fetchAllPages({
+                language: 'fr-FR',
+                region: 'FR',
+                with_release_type: '3', // Code 3 = Sortie nationale en salle uniquement
+                'release_date.gte': this.dateUtilsService.formatDate(startDate), 
+                'release_date.lte': this.dateUtilsService.formatDate(endDate)  
+            })),
+            map(response => this.mapAndFilterGenres(response.results, genreId, startDate, releaseDates, minPopularity)),
         );
     }
 }
