@@ -22,7 +22,7 @@ export class UpcomingMovieReleases implements OnInit{
   constructor (private moviesServise: MoviesService,
                private dateUtilsService: DateUtilsService) {};  
 
-  sortByGenre(genreId?: number): void {
+  filterByGenre(genreId?: number): void {
     this.movieUpcoming$ = this.moviesServise.getUpcomingFrenchCinemaMovies(genreId);
   }
 
