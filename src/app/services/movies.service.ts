@@ -60,7 +60,7 @@ export class MoviesService {
         const currentYear = targetDate ? targetDate.getFullYear() : new Date().getFullYear();
 
         return movies
-            // 1. Cohérence des données : Élimination des fiches fantômes sans titre
+            // 1. Cohérence des données : Élimination des fiches sans titre
             .filter(movie => movie.title && movie.title.trim() !== '')
 
             // 2. Localisation linguistique : Exclusion des titres en caractères non-latins (arabe, cyrillique, asiatique...)
@@ -74,23 +74,26 @@ export class MoviesService {
             .filter(movie => movie.overview && movie.overview.trim().length > 10)
 
             // 4. Exclusion des ressorties : Évite que des classiques (ex: 1965, 1996) restaurés en salle 
-            // ne polluent les nouveautés de l'année. On tolère N et N-1.
+            // ne polluent les nouveautés de l'année.
             .filter(movie => {
                 if (!movie.release_date) return false;
                 const movieYear = new Date(movie.release_date).getFullYear();
                 return movieYear === currentYear;
             })
 
-            // Si on a fourni une liste de mercredis spécifiques, on vérifie si la date du film y figure
+            // 5. Qualité de contenu : Élimination des films sans affiche.
+            .filter(movie => movie.poster_path)
+
+            // 6. Si on a fourni une liste de mercredis spécifiques, on vérifie si la date du film y figure
             .filter(movie => {
                 if (!releaseDates) return true; // Si pas de liste fournie (ex: sur d'autres pages), on laisse passer
                 return releaseDates.includes(movie.release_date.toString());
             })
 
-            // 5. Filtre utilisateur : Sélection optionnelle par genre cinématographique
+            // 7. Filtre utilisateur : Sélection optionnelle par genre cinématographique
             .filter(movie => !genreId || movie.genre_ids.includes(genreId))
 
-            // 6. Mapping : Remplacement des IDs de genres anonymes par leurs libellés textuels (ex: "Action")
+            // 8. Mapping : Remplacement des IDs de genres anonymes par leurs libellés textuels (ex: "Action")
             .map(movie => ({
                 ...movie,
                 genres: this.genresService.getGenreNames(movie.genre_ids)
