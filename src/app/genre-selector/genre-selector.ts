@@ -26,7 +26,7 @@ export class GenreSelector implements OnInit {
     this.genreActuallySelected = genreId;
   }
 
-  showAll(): void {
+  showAllMovies(): void {
     this.genreSelected.emit(undefined);
     this.genreActuallySelected = undefined;
   }
