@@ -33,7 +33,18 @@ export class DateUtilsService {
   }
 
   /**
-   * Calcule la date de fin de la fourchette de recherche (Mercredi prochain + 1 mois).
+   * Calcule le mercredi 12 semaines avant le mercredi de la semaine en cours.
+   */
+  getPreviousWednesday(): Date {
+    const currentWednesday = this.getCurrentWednesday();
+    const previousWednesday = new Date(currentWednesday);
+    previousWednesday.setDate(currentWednesday.getDate() - 84);
+
+    return previousWednesday;
+  }
+
+  /**
+   * Calcule la date de fin de la fourchette de recherche (Mercredi prochain + 4 semaines).
    */
   getNextMonth(): Date {
       const endPeriod = new Date(this.getNextWednesday());
