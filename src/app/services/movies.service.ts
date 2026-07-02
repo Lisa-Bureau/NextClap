@@ -1,10 +1,12 @@
 import { Injectable } from "@angular/core";
-import { EMPTY, expand, filter, forkJoin, map, Observable, reduce, switchMap, tap } from "rxjs";
+import { EMPTY, expand, map, Observable, reduce, switchMap, tap } from "rxjs";
 import { HttpClient } from "@angular/common/http";
 import { DiscoverMoviesResponse, Movie } from "../models/movie";
 import { environment } from '../../environments/environment';
 import { GenresService } from "./genres.service";
 import { DateUtilsService } from "./date-utils.service";
+import { MovieDetails } from "../movie-details/movie-details";
+import { MovieDetail } from "../models/movie-details";
 
 @Injectable({
     providedIn: "root"
@@ -185,5 +187,15 @@ export class MoviesService {
             })),
             map(response => this.mapAndFilterGenres(response.results, genreId, startDate, releaseDates, minPopularity)),
         );
+    }
+
+    getMovieById(movieId: number): Observable<MovieDetail> {
+        return this.http.get<MovieDetail>(`${environment.tmdbUrl}/movie/${movieId}?append_to_response=credits,videos`, {
+            headers: { Authorization: `Bearer ${environment.tmdbToken}` },
+            params: {
+                language: 'fr-FR',
+                region: 'FR'
+            }
+        })
     }
 }
