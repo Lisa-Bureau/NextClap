@@ -1,0 +1,13 @@
+<header [ngClass]="{ 'header-menu-opened': !menuIsClosed }">
+    <button (click)="toggleMenu()">
+        <img src="/icons/menu-burger.png" alt="menu">
+    </button>
+    <a class="link-back-home" routerLink="">NextCLAP.</a>
+    <nav class="links-container" [ngClass]="!menuIsClosed ? 'menu-open' : 'menu-close'">
+        <a class="link-page" routerLink="sorties" (click)="!menuIsClosed ? toggleMenu() : null" routerLinkActive="active">SORTIES</a>
+        <a class="link-page" routerLink="prochainement" (click)="!menuIsClosed ? toggleMenu() : null" routerLinkActive="active">PROCHAINEMENT</a>
+        <a class="link-page" routerLink="en-salle" (click)="!menuIsClosed ? toggleMenu() : null" routerLinkActive="active">À L'AFFICHE</a>
+    </nav>
+</header>
+
+
