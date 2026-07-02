@@ -7,7 +7,9 @@ body {
 }
 
 button {
-    @include typography.button-text;
+    background: none;
+    border: none;
+    text-align: left;
 }
 
 a {
