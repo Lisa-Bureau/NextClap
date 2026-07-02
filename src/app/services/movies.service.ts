@@ -190,7 +190,7 @@ export class MoviesService {
     }
 
     getMovieById(movieId: number): Observable<MovieDetail> {
-        return this.http.get<MovieDetail>(`${environment.tmdbUrl}/movie/${movieId}?append_to_response=credits,videos`, {
+        return this.http.get<MovieDetail>(`${environment.tmdbUrl}/movie/${movieId}?append_to_response=credits,videos,release_dates`, {
             headers: { Authorization: `Bearer ${environment.tmdbToken}` },
             params: {
                 language: 'fr-FR',

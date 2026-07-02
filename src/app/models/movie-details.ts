@@ -26,6 +26,20 @@ export interface VideoResult {
     official: boolean;
 }
 
+export interface ReleaseDates {
+    results: Array<{
+      iso_3166_1: string; // Le code pays (ex: "FR", "US")
+      release_dates: Array<{
+        certification: string; 
+        descriptors: string[];
+        iso_639_1: string;
+        note: string;
+        release_date: string;
+        type: number; // 3 = Sortie Cinéma Standard, 1 = Première, etc.
+      }>;
+    }>;
+}
+
 export interface MovieDetail {
     adult: boolean;
     backdrop_path: string;
@@ -51,5 +65,6 @@ export interface MovieDetail {
     };
     videos?: {
         results: VideoResult[];
-    }
+    };
+    release_dates?: ReleaseDates;
 }

@@ -18,6 +18,7 @@ export class MovieDetails implements OnInit {
   directors$!: Observable<string | undefined>;
   casting$!: Observable<string | undefined>;
   trailerUrl$!: Observable<SafeResourceUrl | null>;
+  frenchReleaseDate$! : Observable<string | null>;
 
   constructor(private route: ActivatedRoute,
               private router: Router,
@@ -74,5 +75,23 @@ export class MovieDetails implements OnInit {
         return null;
       })
     );
+
+    this.frenchReleaseDate$ = this.movie$.pipe(
+      map(movie => {
+        // 1. On cherche le bloc de résultats pour la France ("FR")
+        const frResults = movie.release_dates?.results?.find(r => r.iso_3166_1 === 'FR');
+        
+        if (frResults) {
+          // On cherche en priorité la date de type 3 (Theatrical / Sortie cinéma)
+          const cinemaRelease = frResults.release_dates.find(d => d.type === 3);
+          
+          // Si trouvée, on la renvoie, sinon on prend la première disponible pour la France
+          return cinemaRelease ? cinemaRelease.release_date : frResults.release_dates[0].release_date;
+        }
+        
+        // Si pas de date FR trouvée, on garde la date par défaut mondiale en secours
+        return movie.release_date; 
+      })
+    )
   }
 }

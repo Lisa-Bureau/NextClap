@@ -8,7 +8,7 @@
         <img class="movieDetails__poster" [src]="`https://image.tmdb.org/t/p/w500${movie.poster_path}`" [alt]="movie.title">
         <div class="movieDetails__infos">
             <div class="movieDetails__tags">
-                <p class="movieDetails__tag movieDetails__tag--red">SORTIE {{ movie.release_date | date: "dd MMMM"}}</p>
+                <p class="movieDetails__tag movieDetails__tag--red">SORTIE {{ frenchReleaseDate$ | async | date: "dd MMMM" | uppercase}}</p>
                 @for (genre of movie.genres; track $index) {
                     <p class="movieDetails__tag">{{genre.name | uppercase}}</p>
                 }
