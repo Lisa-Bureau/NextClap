@@ -1,4 +1,4 @@
-<article class="movieCard">
+<button (click)="onViewMovieDetails()" class="movieCard">
     <div class="movieCard__media">
         <img class="movieCard__poster" [src]="`https://image.tmdb.org/t/p/w500${movie.poster_path}`" [alt]="movie.title">
         <div class="movieCard__overlay">
@@ -7,4 +7,4 @@
     </div>
     <p class="movieCard__title">{{movie.title}}</p>
     <p class="movieCard__infos">{{movie.genres.join(' • ')}}</p>
-</article>
+</button>

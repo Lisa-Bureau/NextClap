@@ -1,0 +1,47 @@
+@if (movie$ | async; as movie) {
+    
+    <section class="movieDetails" [ngStyle]="{ '--bg-backdrop': 'url(https://image.tmdb.org/t/p/original' + movie.backdrop_path + ')' }">
+        <button class="movieDetails__return" (click)="goBackPage()">
+            <img src="/icons/arrow.png" alt="arrow back"> 
+            RETOUR
+        </button>
+        <img class="movieDetails__poster" [src]="`https://image.tmdb.org/t/p/w500${movie.poster_path}`" [alt]="movie.title">
+        <div class="movieDetails__infos">
+            <div class="movieDetails__tags">
+                <p class="movieDetails__tag movieDetails__tag--red">SORTIE {{ frenchReleaseDate$ | async | date: "dd MMMM" | uppercase}}</p>
+                @for (genre of movie.genres; track $index) {
+                    <p class="movieDetails__tag">{{genre.name | uppercase}}</p>
+                }
+            </div>
+            <h1>{{movie.title}}</h1>
+            <p class="movieDetails__synopsis">{{movie.overview}}</p>
+            <div class="movieDetails__credits">
+                <div>
+                    <p class="movieDetails__credits--title">RÉALISATION</p>
+                    <p>{{ directors$ | async }}</p>
+                </div>
+
+                <div>
+                    <p class="movieDetails__credits--title">AVEC</p>
+                    <p>{{ casting$ | async }}</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="movieTrailer">
+        <h3>Bande-annonce</h3>
+        @if (trailerUrl$ | async; as trailerUrl) {
+                <iframe
+                class="movieTrailer__video"
+                [src]="trailerUrl" 
+                frameborder="0" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                allowfullscreen>
+                </iframe>
+        } @else {
+            <p class="movieTrailer__error">Aucune bande-annonce disponible pour ce film.</p>
+        }
+    </section>
+}
+

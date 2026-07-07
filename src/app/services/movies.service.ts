@@ -1,10 +1,12 @@
 import { Injectable } from "@angular/core";
-import { EMPTY, expand, filter, forkJoin, map, Observable, reduce, switchMap, tap } from "rxjs";
+import { EMPTY, expand, map, Observable, reduce, switchMap, tap } from "rxjs";
 import { HttpClient } from "@angular/common/http";
 import { DiscoverMoviesResponse, Movie } from "../models/movie";
 import { environment } from '../../environments/environment';
 import { GenresService } from "./genres.service";
 import { DateUtilsService } from "./date-utils.service";
+import { MovieDetails } from "../movie-details/movie-details";
+import { MovieDetail } from "../models/movie-details";
 
 @Injectable({
     providedIn: "root"
@@ -162,7 +164,7 @@ export class MoviesService {
     }
 
     /**
-     * Récupère les films sont à l'affiche entre le mercredi 12 semaines avant et le mercredi de la semaine en cours.
+     * Récupère les films qui sont à l'affiche entre le mercredi 12 semaines avant et le mercredi de la semaine en cours.
      * Utilise switchMap pour annuler automatiquement les requêtes obsolètes en cas de clics rapides.
      * @param {number} [genreId] - ID du genre pour le filtrage optionnel.
      * @returns {Observable<Movie[]>} Flux de films à venir nettoyés et filtrés.
@@ -185,5 +187,21 @@ export class MoviesService {
             })),
             map(response => this.mapAndFilterGenres(response.results, genreId, startDate, releaseDates, minPopularity)),
         );
+    }
+
+    /**
+     * Récupère les informations détaillées d'un film selon son ID.
+     * Utilise append_to_response pour récupérer des ressources complémentaires (credits, videos, release_dates) en une seule requête HTTP.
+     * @param {number} movieId - ID du film.
+     * @returns {Observable<MovieDetail>} Un Observable contenant les détails complets du film.
+     */
+    getMovieById(movieId: number): Observable<MovieDetail> {
+        return this.http.get<MovieDetail>(`${environment.tmdbUrl}/movie/${movieId}?append_to_response=credits,videos,release_dates`, {
+            headers: { Authorization: `Bearer ${environment.tmdbToken}` },
+            params: {
+                language: 'fr-FR',
+                region: 'FR'
+            }
+        });
     }
 }
