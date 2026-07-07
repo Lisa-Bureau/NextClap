@@ -1,0 +1,51 @@
+@use 'abstracts/typography' as *;
+@use 'abstracts/colors' as *;
+@use 'abstracts/breakpoints' as *;
+
+section {
+    margin-top: 5rem;
+    padding: 0 2rem;
+
+    & a {
+        @include section-title;
+        
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+
+        & > img {
+            width: 2rem;
+            opacity: 0.5;
+            transform: rotate(180deg);
+            animation: bounce-arrow 1s ease-out infinite alternate;
+        }
+
+        &:visited {
+            color: $first-text-color;
+        }
+    }
+
+    & .movies-container {
+        margin: 1.5rem 0;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+
+        @include md {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+        @include lg {
+            grid-template-columns: repeat(4, 1fr);
+        }
+    }
+}
+
+@keyframes bounce-arrow {
+    0% {
+        transform: rotate(180deg) translateX(0);
+    }
+    100% {
+        transform: rotate(180deg) translateX(-0.8rem);
+    }
+}

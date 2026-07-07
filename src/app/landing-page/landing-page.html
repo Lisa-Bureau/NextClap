@@ -1,0 +1,32 @@
+<section>
+    <a routerLink="sorties">Les Sorties de la Semaine 
+        <img src="/icons/arrow.png" alt="">
+    </a>
+    <div class="movies-container">
+        @for (movie of movieReleases$ | async; track movie.id) {
+            <app-movie-card [movie]="movie"/>
+        }
+    </div>
+</section>
+
+<section>
+    <a routerLink="prochainement">Les Sorties à Venir
+        <img src="/icons/arrow.png" alt="">
+    </a>
+    <div class="movies-container">
+        @for (movie of moviesUpcoming$ | async; track movie.id) {
+            <app-movie-card [movie]="movie"/>
+        }
+    </div>
+</section>
+
+<section>
+    <a routerLink="en-salle">Les Films à l'Affiche
+        <img src="/icons/arrow.png" alt="">
+    </a>
+    <div class="movies-container">
+        @for (movie of moviesNowPlaying$ | async; track movie.id) {
+            <app-movie-card [movie]="movie"/>
+        }
+    </div>
+</section>
