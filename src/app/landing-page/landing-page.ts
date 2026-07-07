@@ -33,17 +33,17 @@ export class LandingPage implements OnInit {
    */
   getRandomMovies(movies: Observable<Movie[]>): Observable<Movie[]> {
     return movies.pipe(
-      map(movies => {
+      map(moviesArray => {
         // Sécurité : si l'API renvoie un tableau vide ou indéfini, on retourne un tableau vide
-        if (!movies || movies.length === 0) return [];
+        if (!movies || moviesArray.length === 0) return [];
 
         // Création d'une copie superficielle et tri aléatoire 
-        const shuffled = [...movies].sort(() => 0.5 - Math.random());
+        const shuffled = [...moviesArray].sort(() => 0.5 - Math.random());
 
         // Extraction des 4 premiers éléments du tableau mélangé
         return shuffled.slice(0, 4);
       })
-    ) 
+    );
   }
 
   /**
