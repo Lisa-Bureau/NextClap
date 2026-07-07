@@ -164,7 +164,7 @@ export class MoviesService {
     }
 
     /**
-     * Récupère les films sont à l'affiche entre le mercredi 12 semaines avant et le mercredi de la semaine en cours.
+     * Récupère les films qui sont à l'affiche entre le mercredi 12 semaines avant et le mercredi de la semaine en cours.
      * Utilise switchMap pour annuler automatiquement les requêtes obsolètes en cas de clics rapides.
      * @param {number} [genreId] - ID du genre pour le filtrage optionnel.
      * @returns {Observable<Movie[]>} Flux de films à venir nettoyés et filtrés.
@@ -189,6 +189,12 @@ export class MoviesService {
         );
     }
 
+    /**
+     * Récupère les informations détaillées d'un film selon son ID.
+     * Utilise append_to_response pour récupérer des ressources complémentaires (credits, videos, release_dates) en une seule requête HTTP.
+     * @param {number} movieId - ID du film.
+     * @returns {Observable<MovieDetail>} Un Observable contenant les détails complets du film.
+     */
     getMovieById(movieId: number): Observable<MovieDetail> {
         return this.http.get<MovieDetail>(`${environment.tmdbUrl}/movie/${movieId}?append_to_response=credits,videos,release_dates`, {
             headers: { Authorization: `Bearer ${environment.tmdbToken}` },
@@ -196,6 +202,6 @@ export class MoviesService {
                 language: 'fr-FR',
                 region: 'FR'
             }
-        })
+        });
     }
 }
