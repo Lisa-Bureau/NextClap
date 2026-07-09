@@ -23,3 +23,7 @@ export interface DiscoverMoviesResponse {
     total_pages: number;
     total_results: number;
 }
+
+export interface MovieWithTag extends Movie {
+  categoryTag?: 'release' | 'upcoming' | 'nowplaying';
+}
