@@ -1,0 +1,80 @@
+@use 'abstracts/radius' as *;
+@use 'abstracts/colors' as *;
+@use 'abstracts/typography' as *;
+@use 'abstracts/breakpoints' as *;
+
+.movieHero {
+    width: 100%;
+    height: 450px;
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), var(--bg-poster);
+    background-size: cover;
+    background-position: center;
+    border-radius: $radius-md;
+    padding: 0 1rem 1.5rem 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 1rem;
+    position: relative; 
+    overflow: hidden;
+    z-index: 1;
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    isolation: isolate;
+
+    @include md {
+        height: 500px;
+        padding: 0 2rem 2.5rem 2rem;
+    }
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), var(--poster);
+        background-size: cover;
+        background-position: center;
+        filter: blur(1.5px); 
+        transform: scale(1.05); 
+        z-index: -1;
+
+        @include md {
+            background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), var(--backdrop);
+        }
+    }
+
+    &__tags {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    &__tag {
+        background-color: rgba($first-text-color, 0.1);
+        backdrop-filter: blur(12px);
+        padding: 0.25rem 0.5rem;
+        border-radius: $radius-sm;
+        @include tag-text;
+
+        &--red {
+            background-color: $tag-color;
+        }
+    }
+
+    &__synopsis {
+        @include body-text;
+        color: $second-text-color;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        line-clamp: 3;
+        -webkit-line-clamp: 3;
+        overflow: hidden;
+
+        @include md {
+            max-width: 80ch;
+        }
+    }
+}

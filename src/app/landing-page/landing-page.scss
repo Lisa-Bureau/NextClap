@@ -1,0 +1,98 @@
+@use 'abstracts/typography' as *;
+@use 'abstracts/colors' as *;
+@use 'abstracts/breakpoints' as *;
+@use 'abstracts/radius' as *;
+
+p-carousel {
+    width: 100vw;
+    margin-top: 8rem;
+    padding: 0 2rem;
+}
+
+// On force le conteneur de défilement de PrimeNG à couper tout ce qui dépasse
+::ng-deep .p-carousel-content,
+::ng-deep .p-carousel-viewport,
+::ng-deep .p-carousel-item {
+    border-radius: $radius-md !important;
+    overflow: hidden !important;
+    transform: translateZ(0) !important;
+    -webkit-transform: translateZ(0) !important;
+}
+
+.slide-padding {
+    padding: 0 10px; 
+    border-radius: $radius-md !important;
+    overflow: hidden !important;
+}
+
+// Style de base pour TOUTES les puces
+::ng-deep .p-carousel-indicator-list .p-carousel-indicator-button {
+    background-color: $third-text-color !important;
+    width: 10px !important;
+    height: 10px !important;
+    border-radius: 50% !important;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    border: none !important;
+}
+
+// Style pour l'élément actif
+::ng-deep {
+  // Si la classe active est sur le bouton lui-même
+  .p-carousel-indicator-button-active,
+  .p-carousel-indicator-button[data-p-active="true"],
+  // Si la classe active est sur le <li> parent
+  .p-carousel-indicator.p-carousel-indicator-active .p-carousel-indicator-button,
+  .p-carousel-indicator[data-p-active="true"] .p-carousel-indicator-button {
+      background-color: $first-text-color !important;
+      transform: scale(1.1) !important;
+      opacity: 1 !important;
+  }
+}
+
+section {
+    margin-top: 5rem;
+    padding: 0 2rem;
+
+    & a {
+        @include section-title;
+        
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+
+        & > img {
+            width: 2rem;
+            opacity: 0.5;
+            transform: rotate(180deg);
+            animation: bounce-arrow 1s ease-out infinite alternate;
+        }
+
+        &:visited {
+            color: $first-text-color;
+        }
+    }
+
+    & .movies-container {
+        margin: 1.5rem 0;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+
+        @include md {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+        @include lg {
+            grid-template-columns: repeat(4, 1fr);
+        }
+    }
+}
+
+@keyframes bounce-arrow {
+    0% {
+        transform: rotate(180deg) translateX(0);
+    }
+    100% {
+        transform: rotate(180deg) translateX(-0.8rem);
+    }
+}
