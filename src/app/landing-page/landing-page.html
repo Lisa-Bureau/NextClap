@@ -1,3 +1,22 @@
+@if (headlineMovies$ | async; as movies) {
+    
+    <p-carousel [value]="movies" 
+                [numScroll]="1" 
+                [circular]="true" 
+                [autoplayInterval]="4000"
+                [showNavigators]="false"
+                [showIndicators]="true">
+        
+        <ng-template #item let-movie>
+            <div class="slide-padding">
+                <app-headline-movie-card [headlineMovie]="movie"/>
+            </div>
+        </ng-template>
+
+    </p-carousel>
+
+}
+
 <section>
     <a routerLink="sorties">Les Sorties de la Semaine 
         <img src="/icons/arrow.png" alt="">
