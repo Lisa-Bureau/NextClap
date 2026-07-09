@@ -1,0 +1,21 @@
+<div class="movieHero" (click)="onViewMovieDetails()" [ngStyle]="{ 
+        '--poster': 'url(https://image.tmdb.org/t/p/original' + headlineMovie.poster_path + ')',
+        '--backdrop': 'url(https://image.tmdb.org/t/p/original' + headlineMovie.backdrop_path + ')'
+     }">
+    <div class="movieHero__tags">
+
+        @if (headlineMovie.categoryTag === 'release') {
+            <p class="movieHero__tag movieHero__tag--red">SORTIE</p>
+        } @else if (headlineMovie.categoryTag === 'upcoming') {
+            <p class="movieHero__tag movieHero__tag--red">PROCHAINEMENT</p>
+        } @else if (headlineMovie.categoryTag === 'nowplaying') {
+            <p class="movieHero__tag movieHero__tag--red">EN SALLE</p>
+        }
+
+        <p class="movieHero__tag">{{headlineMovie.genres[0] | uppercase}}</p>
+        
+    </div>
+    <h1>{{headlineMovie.title}}</h1>
+    <p class="movieHero__synopsis">{{headlineMovie.overview}}</p>
+</div>
+
