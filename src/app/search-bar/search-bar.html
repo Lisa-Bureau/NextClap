@@ -1,0 +1,12 @@
+<dialog class="modal-search" #searchModal [class.open]="searchIsOpen" (click)="$event.target === searchModal ? toggleSearch(searchInput) : null">
+    <input 
+        type="text"
+        class="search-input"
+        placeholder="Rechercher un film ..."
+        #searchInput
+    >
+
+    <button class="search-btn" (click)="toggleSearch(searchInput)">
+        <img src="/icons/search.png" alt="search">
+    </button>
+</dialog>

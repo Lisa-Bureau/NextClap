@@ -1,0 +1,120 @@
+@use 'abstracts/colors' as *;
+@use 'abstracts/typography' as *;
+@use 'abstracts/breakpoints' as *;
+@use 'abstracts/radius' as *;
+
+.modal-search {
+    position: relative;
+    margin-right: 0.8rem;
+    padding-left: 0.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: $surface-color;
+    border-radius: $radius-lg;
+    border: 1px solid $border-color;
+    width: 1.75rem;
+    height: 1.75rem;
+    min-width: 1.75rem;
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s;
+
+    &::backdrop {
+        backdrop-filter: blur(8px)
+    }
+
+    &.open, &[open] {
+        position: fixed;
+        top: 1rem;       
+        right: 0.8rem;   
+        left: auto;      
+        bottom: auto;    
+        margin: 0;       
+        width: calc(100vw - 4.5rem);
+        max-width: 250px;
+        height: 1.75rem;
+    }
+
+    @include md {
+        margin-right: 0.8rem;
+        width: calc(100vw - 4.5rem);
+        max-width: 300px;
+        height: 1.75rem;
+        pointer-events: none;
+
+        &::backdrop {
+            backdrop-filter: none;
+            display: none;
+        }
+    }
+
+    @include lg {
+        margin-right: 2.3rem;
+        height: 2.5rem;
+    }
+}
+
+.search-btn {
+    width: 1.75rem;
+    height: 1.75rem;
+    background-color: $surface-color;
+    border: 1px solid $border-color;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    right: -1px;
+    top: 50%;
+    transform: translateY(-50%);
+
+    & img {
+        width: 0.8rem;
+        height: 0.8rem;
+
+        @include lg {
+            width: 1rem;
+            height: 1rem;
+        }
+    }
+
+    .open &, &[open] & {
+        border-color: transparent;
+        background-color: transparent;
+    }
+
+    @include md {
+        border-color: transparent;
+        background-color: transparent;
+        pointer-events: none; 
+        cursor: default;
+        right: 0.3rem;
+    }
+
+    @include lg {
+        height: 2.5rem;
+    }
+}
+
+.search-input {
+    width: 0; 
+    height: 1.75rem;
+    border: none;
+    background: transparent;
+    outline: none;
+    font-size: 16px;
+    opacity: 0;
+    color: $first-text-color;
+    @include body-text;
+    padding-right: 2rem;
+
+    .open & {
+        width: 100%;
+        opacity: 1;
+    }
+
+    @include md {
+        width: 100%;
+        opacity: 1;
+        pointer-events: auto;
+    }
+}
