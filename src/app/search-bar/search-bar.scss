@@ -3,7 +3,12 @@
 @use 'abstracts/breakpoints' as *;
 @use 'abstracts/radius' as *;
 
+// ==========================================================================
+// 1. LE CONTENEUR GLOBAL (DIALOG / MODAL)
+// ==========================================================================
+
 .modal-search {
+    // Styles initiaux sur Mobile (Fermé : simple petit rond)
     position: relative;
     margin-right: 0.8rem;
     padding-left: 0.8rem;
@@ -16,42 +21,58 @@
     width: 1.75rem;
     height: 1.75rem;
     min-width: 1.75rem;
+
+    // Animation fluide du déploiement vers la gauche
     transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s;
 
+    // Flou d'arrière-plan natif (uniquement actif sur mobile via showModal())
     &::backdrop {
         backdrop-filter: blur(8px)
     }
 
+    // ÉTAT OUVERT (Mobile uniquement : passage en plein écran/fixed)
     &.open, &[open] {
         position: fixed;
         top: 1rem;       
         right: 0.8rem;   
-        left: auto;      
-        bottom: auto;    
-        margin: 0;       
+        left: auto;      // Annule le positionnement centré natif du <dialog>
+        bottom: auto;    // Annule le positionnement centré natif du <dialog>
+        margin: 0;       // Supprime le 'margin: auto' imposé par le navigateur
+
+        // Largeur dynamique (Prend l'écran moins l'espace pour le logo/liens restants)
         width: calc(100vw - 4.5rem);
-        max-width: 250px;
+        max-width: 250px; // Évite que la barre ne devienne trop grande sur grand mobile
         height: 1.75rem;
     }
 
+    // BREAKPOINT TABLETTE
     @include md {
         margin-right: 0.8rem;
         width: calc(100vw - 4.5rem);
         max-width: 300px;
         height: 1.75rem;
+
+        // Rend le conteneur insensible au clic pour éviter que le clic "à côté" 
+        // ne déclenche la fermeture de la modal (vu qu'elle est figée sur desktop)
         pointer-events: none;
 
+        // Désactivation complète du backdrop natif sur grand écran
         &::backdrop {
             backdrop-filter: none;
             display: none;
         }
     }
 
+    // BREAKPOINT ORDINATEUR
     @include lg {
         margin-right: 2.3rem;
-        height: 2.5rem;
+        height: 2.5rem; // Version PC légèrement plus haute pour le confort visuel
     }
 }
+
+// ==========================================================================
+// 2. LE BOUTON D'ACTION (ICÔNE LOUPE)
+// ==========================================================================
 
 .search-btn {
     width: 1.75rem;
@@ -62,11 +83,14 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    position: absolute;
-    right: -1px;
-    top: 50%;
-    transform: translateY(-50%);
 
+    // Positionnement absolu pour rester ancré à droite pendant l'animation
+    position: absolute;
+    right: -1px; // Aligné pile sur la bordure droite du parent
+    top: 50%;
+    transform: translateY(-50%); // Centrage vertical parfait de secours
+
+    // L'image de la loupe à l'intérieur
     & img {
         width: 0.8rem;
         height: 0.8rem;
@@ -77,44 +101,138 @@
         }
     }
 
+    // Quand la modal est ouverte (Mobile) : fusion visuelle du bouton dans la barre
     .open &, &[open] & {
         border-color: transparent;
         background-color: transparent;
     }
 
+    // Comportement sur Tablette/PC
     @include md {
         border-color: transparent;
         background-color: transparent;
+
+        // Le bouton devient purement décoratif, on désactive son action de clic
         pointer-events: none; 
         cursor: default;
-        right: 0.3rem;
+        right: 0.3rem; // Léger ajustement pour le décoller du bord
     }
 
     @include lg {
-        height: 2.5rem;
+        height: 2.5rem; // S'adapte à la nouvelle hauteur de la modal sur PC
     }
 }
 
+// ==========================================================================
+// 3. L'INPUT DE SAISIE DE TEXTE
+// ==========================================================================
+
 .search-input {
+    // Caché et compact par défaut sur mobile
     width: 0; 
     height: 1.75rem;
     border: none;
     background: transparent;
     outline: none;
-    font-size: 16px;
     opacity: 0;
     color: $first-text-color;
     @include body-text;
-    padding-right: 2rem;
+    font-size: 16px; // Évite le zoom automatique indésirable sur iOS au focus
+    padding-right: 2rem; // Marge de sécurité pour éviter que le texte écrit passe sous la loupe
 
+    // Déploiement de l'input quand on ouvre la recherche sur mobile
     .open & {
         width: 100%;
         opacity: 1;
     }
 
+    // Toujours visible et actif sur Tablette/PC
     @include md {
         width: 100%;
         opacity: 1;
+
+        // Crucial : Réactive le clic sur l'input car le parent (.modal-search) est en 'pointer-events: none'
         pointer-events: auto;
+    }
+}
+
+// ==========================================================================
+// 4. DROPDOWN DE RÉSULTAT DE LA RECHERCHE
+// ==========================================================================
+
+.search-dropdown {
+    // POSITIONNEMENT & CORRECTION DU COMPORTEMENT <DIALOG>
+    position: fixed;
+    top: 3.25rem;    // Ajustement vertical (hauteur de la modal + marge de centrage nav + espace d'interligne)
+    right: 0.8rem;   // Aligne le dropdown sur le bord droit de l'écran
+    left: auto;      // Force l'annulation du centrage horizontal automatique natif de la balise <dialog>
+    bottom: auto;    // Force l'annulation du centrage vertical automatique natif de la balise <dialog>
+    margin: 0;       // Élimine le 'margin: auto' imposé par défaut par le navigateur sur les modals
+    
+    // DIMENSIONS & RESPONSIVE INITIAL (MOBILE)
+    width: calc(100vw - 4.5rem); // S'adapte à la largeur de l'écran tout en laissant une marge sur les côtés
+    max-width: 250px;            // Limite la largeur maximale sur les grands smartphones
+    height: 150px;               // Hauteur par défaut fixe lorsqu'il y a des films trouvés
+    max-height: 300px;           // Sécurité pour éviter que la liste ne dépasse de l'écran si elle s'agrandit
+
+    // DESIGN & VISUEL
+    background: $surface-color;
+    border: 1px solid $border-color;
+    border-radius: $radius-md;
+    overflow-y: auto;            // active un défilement (scroll) vertical si la liste de films est longue
+    list-style: none;            // Supprime les puces par défaut de la balise <ul>
+
+    // LAYOUT (DISPOSITION EN COLONNE)
+    display: flex;
+    flex-direction: column;
+
+    // INTERACTION
+    // Crucial : Réactive la détection du clic (pointer-events) sur le dropdown, 
+    // car le conteneur parent (.modal-search) utilise 'pointer-events: none' pour être transparent aux clics.
+    pointer-events: auto;
+
+    // RESPONSIVE : TABLETTES & ÉCRANS INTERMÉDIAIRES
+    @include md {
+        max-width: 300px;   // On donne un peu plus d'espace en largeur aux titres de films
+    }
+
+    // RESPONSIVE : GRANDS ÉCRANS (ORDINATEURS)
+    @include lg {
+        top: 4.25rem;           // Décale le dropdown plus bas car la navbar PC est plus haute que la nav mobile
+        margin-right: 1.5rem;   // Aligne proprement le dropdown avec l'icône de la barre d'outils PC
+    }
+
+    // ÉTAT : LISTE VIDE (AUCUN RÉSULTAT)
+    // S'active uniquement via Angular lorsque la recherche ne trouve rien
+    &.no-result {
+        height: 1.75rem;          // Réduit drastiquement la hauteur de la boîte pour l'ajuster à une seule ligne
+        padding: 0 0.8rem;        // Supprime le padding vertical pour bien centrer le texte
+        justify-content: center;  // Centre verticalement le message "Aucun résultat"
+
+        // Gestion spécifique du texte d'erreur à l'intérieur du dropdown vide
+        .search-result {
+            color: $tag-color;  // Applique une couleur rouge au texte informatif
+
+            // Désactive totalement les effets visuels de survol puisque ce n'est pas un film cliquable
+            &:hover {
+                background: none;
+                color: $tag-color;
+                cursor: initial;    // Remet le curseur classique (flèche) à la place de la main (pointer)
+            }
+        }
+    }
+
+    // ÉTAT : RÉSULTAT VALIDE (LIGNE DE FILM)
+    .search-result {
+        color: $accent-color;
+        @include body-text;
+        padding: 0.5rem 0.8rem;   // Crée une zone de clic confortable tout autour du titre
+        cursor: pointer;          // Transforme le curseur en main pour indiquer que c'est interactif
+
+        // Effet visuel au survol de la souris (Hover)
+        &:hover {
+            background-color: $second-text-color;
+            color: $background-color;
+        }
     }
 }

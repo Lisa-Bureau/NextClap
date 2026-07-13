@@ -1,10 +1,28 @@
-<dialog class="modal-search" #searchModal [class.open]="searchIsOpen" (click)="$event.target === searchModal ? toggleSearch(searchInput) : null">
+<dialog class="modal-search" 
+        #searchModal
+        [class.open]="searchIsOpen"
+        (click)="$event.target === searchModal ? toggleSearch(searchInput) : null"
+>
     <input 
         type="text"
         class="search-input"
         placeholder="Rechercher un film ..."
         #searchInput
+        (input)="onSearchChange(searchInput.value)"
+        (focus)="onSearchChange(searchInput.value)"
     >
+
+    @if (isDropdownOpen) {
+        <ul class="search-dropdown" [class.no-result]="filteredMovies.length === 0">
+            @for (movie of filteredMovies; track movie.id) {
+                <li class="search-result" (click)="goToDetail(movie.id)">
+                    {{ movie.title }}
+                </li>
+            } @empty {
+                <li class="search-result">Aucun résultat</li>
+            }
+        </ul>
+    }
 
     <button class="search-btn" (click)="toggleSearch(searchInput)">
         <img src="/icons/search.png" alt="search">
