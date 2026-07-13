@@ -21,6 +21,7 @@
     transform: translateZ(0);
     -webkit-transform: translateZ(0);
     isolation: isolate;
+    cursor: pointer;
 
     @include md {
         height: 500px;

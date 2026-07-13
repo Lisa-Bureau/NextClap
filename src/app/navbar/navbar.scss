@@ -33,6 +33,10 @@ header {
         gap: 1rem;
         margin-left: 0.8rem;
         z-index: 1;
+
+        @include lg {
+            gap: 2rem;
+        }
     }
 }
 
