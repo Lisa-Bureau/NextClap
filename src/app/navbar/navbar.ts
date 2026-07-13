@@ -1,19 +1,19 @@
-import { NgClass } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { SearchBar } from '../search-bar/search-bar';
 
 @Component({
   selector: 'app-navbar',
-  imports: [NgClass, RouterLink, RouterLinkActive],
+  imports: [RouterLink, RouterLinkActive,SearchBar],
   templateUrl: './navbar.html',
   styleUrl: './navbar.scss',
 })
 export class Navbar {
 
-  menuIsClosed = true;
+  menuIsOpen: boolean = false;
 
   /* Alterne l'état d'ouverture du menu burger. */
   toggleMenu(): void {
-    this.menuIsClosed = !this.menuIsClosed;
+    this.menuIsOpen = !this.menuIsOpen;
   }
 }

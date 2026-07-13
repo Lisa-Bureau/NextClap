@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { map, Observable } from 'rxjs';
+import { map, Observable, shareReplay, switchMap } from 'rxjs';
 import { MoviesService } from '../services/movies.service';
 import { MovieDetail } from '../models/movie-details';
-import { AsyncPipe, DatePipe, Location, NgStyle, UpperCasePipe } from '@angular/common';
+import { AsyncPipe, DatePipe, NgStyle, UpperCasePipe } from '@angular/common';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { NavigationService } from '../services/navigation.service';
 
 @Component({
   selector: 'app-movie-details',
@@ -31,33 +32,41 @@ export class MovieDetails implements OnInit {
 
   constructor(private route: ActivatedRoute,
               private router: Router,
-              private location: Location,
+              private navigationService: NavigationService,
               private moviesService: MoviesService,
               private sanitizer: DomSanitizer) {};
 
   /**
-   * Permet de retourner à la page précédente.
-   * Utilise l'historique du navigateur si disponible, sinon redirige vers l'accueil en sécurité.
+   * Gère le retour à la page précédente de manière intelligente et sécurisée.
+   * Au lieu de faire un simple retour en arrière dans l'historique du navigateur 
+   * (qui pourrait reculer vers un autre film), cette méthode consulte le NavigationService 
+   * pour obtenir une destination cohérente.
    */
   goBackPage(): void {
-    const currentHistory = window.history.length;
+    // 1. On demande au service de navigation de calculer l'URL de retour valide (soit un Hub autorisé, soit l'accueil)
+    const targetUrl = this.navigationService.getValidPreviousUrl();
 
-    if (currentHistory > 1) {
-      this.location.back(); // Retour à la page d'origine de l'utilisateur
-    } else {
-      this.router.navigateByUrl("/"); // Redirection de secours vers la racine
-    }
+    // 2. On déclenche la redirection officielle d'Angular vers cette URL sécurisée
+    this.router.navigateByUrl(targetUrl);
   }
 
   /**
    * Initialisation du composant et configuration des flux de données réactifs.
    */
   ngOnInit(): void {
-    // 1. Récupération de l'identifiant du film depuis les paramètres de l'URL de la route
-    const movieId = this.route.snapshot.params["id"];
+    this.movie$ = this.route.paramMap.pipe(
+      // 1. On extrait uniquement le paramètre 'id' depuis la carte des paramètres de l'URL
+      map(params => params.get('id')),
 
-    // 2. Initialisation de la source de données principale
-    this.movie$ = this.moviesService.getMovieById(movieId);
+      // 2. On transforme l'ID en flux de données du film.
+      // switchMap annule automatiquement la requête précédente si l'ID change entre-temps.
+      // Le '+' convertit la chaîne de caractères de l'URL en 'number' pour ton service.
+      switchMap(movieId => this.moviesService.getMovieById(+movieId!)),
+
+      // 3. On partage le résultat de la requête HTTP avec tous les autres Observables dépendants.
+      // Évite de déclencher plusieurs requêtes réseau identiques pour le même film.
+      shareReplay(1) 
+    );
 
     // 3. Extraction et filtrage de tous les membres de l'équipe ayant le rôle de réalisateur ("Director")
     this.directors$ = this.movie$.pipe(

@@ -13,6 +13,7 @@ header {
     top: 0;
     z-index: 999;
     display: flex;
+    justify-content: space-between;
     align-items: center;
     gap: 1.5rem;
 
@@ -25,9 +26,21 @@ header {
         height: 5rem;
         gap: 2.5rem;
     }
+
+    .header-container-right {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-left: 0.8rem;
+        z-index: 1;
+
+        @include lg {
+            gap: 2rem;
+        }
+    }
 }
 
-button {
+.menu-btn {
     width: 2rem;
     height: 2rem;
     background: none;
@@ -35,7 +48,6 @@ button {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding-left: 1.5rem;
     position: relative;
     z-index: 1000;
 
@@ -67,6 +79,42 @@ button {
         display: flex;
         gap: 2rem;
     }
+
+    &.menu-open {
+        width: 100%;
+        height: 11.75rem;
+        padding-top: 3.75rem;
+        background-color: rgba($background-color, 0.8);
+        border-bottom: 1px solid $border-color;
+        backdrop-filter: blur(12px);
+        position: fixed;
+        left: 0;
+        top: 0;
+        z-index: 998;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 1rem;
+        padding-left: 1.5rem;
+        animation: menu-appears 0.4s ease-in-out forwards;
+        transform-origin: top;
+    }
+
+    .link-page {
+        @include link-text;
+        color: $third-text-color;
+        transition: color 150ms;
+
+        @include lg {
+            &:hover {
+                color: $first-text-color;
+            }
+        }
+
+        &.active {
+            color: $first-text-color;
+        }
+    }
 }
 
 @keyframes menu-appears {
@@ -78,40 +126,4 @@ button {
         transform: scaleY(1);
         opacity: 1;
     }
-}
-
-.menu-open {
-    width: 100%;
-    height: 11.75rem;
-    padding-top: 3.75rem;
-    background-color: rgba($background-color, 0.8);
-    border-bottom: 1px solid $border-color;
-    backdrop-filter: blur(12px);
-    position: fixed;
-    left: 0;
-    top: 0;
-    z-index: 998;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 1rem;
-    padding-left: 1.5rem;
-    animation: menu-appears 0.4s ease-in-out forwards;
-    transform-origin: top;
-}
-
-.link-page {
-    @include link-text;
-    color: $third-text-color;
-    transition: color 150ms;
-
-    @include lg {
-        &:hover {
-            color: $first-text-color;
-        }
-    }
-}
-
-.active {
-    color: $first-text-color;
 }
