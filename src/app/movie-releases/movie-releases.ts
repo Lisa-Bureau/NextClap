@@ -5,6 +5,7 @@ import { MoviesService } from '../services/movies.service';
 import { DatePipe } from '@angular/common';
 import { MovieList } from '../movie-list/movie-list';
 import { DateUtilsService } from '../services/date-utils.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-movie-releases',
@@ -18,6 +19,7 @@ export class MovieReleases implements OnInit {
   startDay!: Date;
   
   constructor(private moviesService: MoviesService,
+              private route: ActivatedRoute,
               private dateUtilsService: DateUtilsService) {};
 
   filterMoviesByGenre(genreId?: number): void {
@@ -29,11 +31,13 @@ export class MovieReleases implements OnInit {
   }
 
   ngOnInit(): void {
-    this.movieReleases$ = this.moviesService.activeSort$.pipe(
-      switchMap(condition => {
-        return this.moviesService.getMovieReleasesFrenchCinema(undefined, condition);
+    this.movieReleases$ = this.route.queryParams.pipe(
+      switchMap(params => {
+        const currentSort = params['sort'] || '';
+        
+        return this.moviesService.getMovieReleasesFrenchCinema(undefined, currentSort);
       })
-    )
+    );
 
     this.startDay = this.dateUtilsService.getCurrentWednesday();
   } 

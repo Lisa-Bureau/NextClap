@@ -1,7 +1,6 @@
-import { Component, ElementRef, HostListener, OnDestroy, OnInit } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
-import { MoviesService } from '../services/movies.service';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-sort-selector',
@@ -9,7 +8,7 @@ import { MoviesService } from '../services/movies.service';
   templateUrl: './sort-selector.html',
   styleUrl: './sort-selector.scss',
 })
-export class SortSelector implements OnInit, OnDestroy {
+export class SortSelector implements OnInit {
 
   // Stocke l'URL de la page active (ex: '/sorties')
   currentUrl!: string;
@@ -28,7 +27,7 @@ export class SortSelector implements OnInit, OnDestroy {
   sortControl = new FormControl('');
 
   constructor(private router: Router,
-              private moviesService: MoviesService,
+              private route: ActivatedRoute,
               private elementRef: ElementRef) {};
 
   /**
@@ -45,22 +44,24 @@ export class SortSelector implements OnInit, OnDestroy {
     // 1. Récupère l'URL de la page courante au chargement
     this.currentUrl = this.router.url;
 
-    // 2. Écoute en continu les changements de valeur des boutons radio.
-    // Dès que l'utilisateur sélectionne une option, sa clé (ex: 'popular') est envoyée au service de films.
-    this.sortControl.valueChanges.subscribe(value => {
-      if (value) {
-        this.moviesService.setSort(value);
-      }
-    });
-  }
+    // 1. Récupération "one-shot" de la valeur du paramètre '?sort=' dans l'URL actuelle.
+    // Si le paramètre n'existe pas dans l'URL, on utilise une chaîne vide par défaut.
+    const currentSort = this.route.snapshot.queryParamMap.get('sort') || '';
 
-  /**
-   * Nettoyage à la destruction du composant (changement de page)
-   */
-  ngOnDestroy(): void {
-    // Réinitialise le filtre de tri dans le service partagé (Singleton) 
-    // pour éviter qu'un tri sélectionné ici ne pollue la page suivante.
-    this.moviesService.setSort('');
+    // 2. Initialisation de la valeur visuelle du bouton radio avec le tri de l'URL.
+    // { emitEvent: false } est CRUCIAL ici : cela empêche Angular de déclencher la fonction
+    // 'valueChanges' (ci-dessous), ce qui éviterait une boucle infinie de mise à jour inutile.
+    this.sortControl.setValue(currentSort, { emitEvent: false });
+
+    // 3. Écoute active des changements de sélection de l'utilisateur sur le formulaire.
+    this.sortControl.valueChanges.subscribe(value => {
+      // Navigation réactive : on ré-aiguille l'application sur la même page mais avec un paramètre d'URL mis à jour
+      this.router.navigate([], {
+        relativeTo: this.route,                 // Reste sur le composant/chemin de la page actuelle
+        queryParams: { sort: value || null },   // Met à jour '?sort=valeur'. Si 'value' est vide, 'null' retire proprement le paramètre de l'URL.
+        queryParamsHandling: 'merge'            // Fusionne le tri avec les autres paramètres existants de la page (ex: ?page=2 ou ?search=...)
+      });
+    });
   }
 
   /**

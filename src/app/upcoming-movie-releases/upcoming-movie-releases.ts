@@ -6,6 +6,7 @@ import { Observable, switchMap } from 'rxjs';
 import { Movie } from '../models/movie';
 import { MovieList } from '../movie-list/movie-list';
 import { DateUtilsService } from '../services/date-utils.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-upcoming-movie-releases',
@@ -19,24 +20,28 @@ export class UpcomingMovieReleases implements OnInit{
   endDay!: Date;
   movieUpcoming$!: Observable<Movie[]>;
 
-  constructor (private moviesServise: MoviesService,
-               private dateUtilsService: DateUtilsService) {};  
+  constructor(private moviesService: MoviesService,
+              private route: ActivatedRoute,
+              private dateUtilsService: DateUtilsService) {};  
 
   filterMoviesByGenre(genreId?: number): void {
-    this.movieUpcoming$ = this.moviesServise.getUpcomingFrenchCinemaMovies(genreId);
+    this.movieUpcoming$ = this.moviesService.getUpcomingFrenchCinemaMovies(genreId);
   }
 
   showAlMovies(): void {
-    this.movieUpcoming$ = this.moviesServise.getUpcomingFrenchCinemaMovies();
+    this.movieUpcoming$ = this.moviesService.getUpcomingFrenchCinemaMovies();
   }
 
   ngOnInit(): void {
     this.startDay = this.dateUtilsService.getNextWednesday();
     this.endDay = this.dateUtilsService.getNextMonth();
-    this.movieUpcoming$ = this.moviesServise.activeSort$.pipe(
-      switchMap(condition => {
-        return this.moviesServise.getUpcomingFrenchCinemaMovies(undefined, condition);
+
+    this.movieUpcoming$ = this.route.queryParams.pipe(
+      switchMap(params => {
+        const currentSort = params['sort'] || '';
+
+        return this.moviesService.getUpcomingFrenchCinemaMovies(undefined, currentSort);
       })
-    )
-    }
+    );
+  }
 }
