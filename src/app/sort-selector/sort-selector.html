@@ -1,0 +1,25 @@
+<button class="sort-btn" (click)="toggleSort()">
+    <img src="/icons/sort.png" alt="sort">
+</button>
+
+@if (isDropdownOpen) {
+    <div class="dropdown">
+        <p>Trier les films par :</p>
+
+        <div class="sort-container">
+            @if(currentUrl !== "/sorties") {
+                @for(item of sortingCondition; track item.key) {
+                    <div class="sort-option">
+                        <input type="radio" [value]="item.key" name="sortGroup" [formControl]="sortControl">
+                        <label>{{item.label}}</label>
+                    </div>
+                }
+            } @else {
+                <div class="sort-option">
+                    <input type="radio" [value]="sortingCondition[2].key" name="sortGroup" [formControl]="sortControl">
+                    <label>{{sortingCondition[2].label}}</label>
+                </div>
+            }
+        </div>      
+    </div>
+}
