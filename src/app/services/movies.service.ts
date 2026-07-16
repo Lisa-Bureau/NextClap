@@ -167,17 +167,6 @@ export class MoviesService {
         );
     }
 
-    // Gestion de l'état du tri (BehaviorSubject pour retenir la dernière valeur active)
-    private activeSortSubject = new BehaviorSubject<string>('');
-    activeSort$ = this.activeSortSubject.asObservable();
-
-    /**
-     * Met à jour le critère de tri actif et notifie les abonnés.
-     */
-    setSort(condition: string) {
-        this.activeSortSubject.next(condition);
-    }
-
     /**
      * Applique un tri de sécurité drastique sur les données brutes de TMDB.
      * L'API TMDB incluant des ressorties de vieux films, des fiches incomplètes ou non traduites,
