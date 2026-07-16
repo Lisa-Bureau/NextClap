@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MoviesService } from '../services/movies.service';
 import { GenresService } from '../services/genres.service';
 import { DatePipe } from '@angular/common';
-import { Observable } from 'rxjs';
+import { Observable, switchMap } from 'rxjs';
 import { Movie } from '../models/movie';
 import { MovieList } from '../movie-list/movie-list';
 import { DateUtilsService } from '../services/date-utils.service';
@@ -33,6 +33,10 @@ export class UpcomingMovieReleases implements OnInit{
   ngOnInit(): void {
     this.startDay = this.dateUtilsService.getNextWednesday();
     this.endDay = this.dateUtilsService.getNextMonth();
-    this.movieUpcoming$ = this.moviesServise.getUpcomingFrenchCinemaMovies();
+    this.movieUpcoming$ = this.moviesServise.activeSort$.pipe(
+      switchMap(condition => {
+        return this.moviesServise.getUpcomingFrenchCinemaMovies(undefined, condition);
+      })
+    )
     }
 }

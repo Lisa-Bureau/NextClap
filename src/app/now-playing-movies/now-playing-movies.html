@@ -1,5 +1,6 @@
 <app-movie-list
-    title="Les Films à l'Affiche"
+    title="Les Films en Salle"
+    subtitle="Les films sorties dans les 12 dernières semaines et qui sont toujours en salle"
     [movies$]="movieNowPlaying$"
     (genreSelected)="filterMoviesByGenre($event)">   
 </app-movie-list>

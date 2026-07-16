@@ -1,7 +1,5 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { map, Observable } from 'rxjs';
-import { Movie } from '../models/movie';
-import { MoviesService } from '../services/movies.service';
 import { AsyncPipe, UpperCasePipe, NgClass } from '@angular/common';
 import { Genre } from '../models/movie-genres';
 import { GenresService } from '../services/genres.service';
@@ -18,8 +16,7 @@ export class GenreSelector implements OnInit {
   movieGenres$!: Observable<Genre[]>;
   genreActuallySelected?: number;
 
-  constructor(private moviesService: MoviesService,
-              private genresService: GenresService) {};
+  constructor(private genresService: GenresService) {};
 
   selectGenre(genreId: number): void {
     this.genreSelected.emit(genreId);

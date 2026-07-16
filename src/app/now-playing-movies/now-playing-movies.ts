@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MovieList } from '../movie-list/movie-list';
-import { Observable, tap } from 'rxjs';
+import { Observable, switchMap, tap } from 'rxjs';
 import { Movie } from '../models/movie';
 import { MoviesService } from '../services/movies.service';
 
@@ -25,6 +25,10 @@ export class NowPlayingMovies implements OnInit {
   }
 
   ngOnInit(): void {
-    this.movieNowPlaying$ = this.moviesService.getNowPlayingFrenchCinemaMovies();
+    this.movieNowPlaying$ = this.moviesService.activeSort$.pipe(
+      switchMap(condition => {
+        return this.moviesService.getNowPlayingFrenchCinemaMovies(undefined, condition);
+      })
+    )
   }
 }

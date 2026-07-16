@@ -1,11 +1,12 @@
 <header>
-    <h2 class="title">{{title}}</h2>
-    <p class="subtitle">{{subtitle}}</p>
+    <div class="titles">
+        <h2 class="title">{{title}}</h2>
+        <p class="subtitle">{{subtitle}}</p>
+    </div>
+    <app-sort-selector />
 </header>
 
-<app-genre-selector
-  (genreSelected)="genreSelected.emit($event)">
-</app-genre-selector>
+<app-genre-selector (genreSelected)="genreSelected.emit($event)" />
 
 <section class="movieGrid">
     @for (movie of movies$ | async; track movie.id) {
