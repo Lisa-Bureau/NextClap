@@ -4,9 +4,12 @@
 @use 'abstracts/radius' as *;
 
 header {
-    width: 86vw;
+    width: 85vw;
     margin: 0 auto;
     margin-top: 6rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
 
     @include lg {
         margin-top: 7.25rem;
@@ -25,7 +28,7 @@ header {
 
 .movieGrid {
     display: grid;
-    width: 86vw;
+    width: 85vw;
     grid-template-columns: 1fr;
     gap: 1.5rem;
     margin: 2rem auto;
