@@ -167,9 +167,13 @@ export class MoviesService {
         );
     }
 
+    // Gestion de l'état du tri (BehaviorSubject pour retenir la dernière valeur active)
     private activeSortSubject = new BehaviorSubject<string>('');
     activeSort$ = this.activeSortSubject.asObservable();
 
+    /**
+     * Met à jour le critère de tri actif et notifie les abonnés.
+     */
     setSort(condition: string) {
         this.activeSortSubject.next(condition);
     }
@@ -182,6 +186,8 @@ export class MoviesService {
      * @param {number} [genreId] - ID optionnel du genre à filtrer.
      * @param {Date} [targetDate] - Date de référence pour valider l'année de sortie.
      * @param {string[]} [releaseDates] - Tableau des dates de sortie du mois.
+     * @param {number} [minPopularity] - Seuil de popularité minimal requis.
+     * @param {string} [sortBy] - Critère de tri actif (ex: 'recent', 'oldest', 'popular').
      * @returns {Movie[]} Tableau filtré, nettoyé et documenté avec le nom des genres.
      * @private
      */
@@ -250,6 +256,7 @@ export class MoviesService {
                     const dateB = new Date(b.release_date).getTime();
 
                     switch (sortBy) {
+                        // Tri temporel basé sur la proximité absolue avec la date du jour (gère Now Playing et Upcoming)
                         case "recent":
                             return Math.abs(dateA - today) - Math.abs(dateB - today);
                         case "oldest" :
