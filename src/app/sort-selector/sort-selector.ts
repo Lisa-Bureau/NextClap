@@ -1,6 +1,7 @@
 import { Component, ElementRef, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { MoviesService } from '../services/movies.service';
 
 @Component({
   selector: 'app-sort-selector',
@@ -21,6 +22,7 @@ export class SortSelector implements OnInit, OnDestroy {
   sortControl = new FormControl('');
 
   constructor(private router: Router,
+              private moviesService: MoviesService,
               private elementRef: ElementRef) {};
 
   toggleSort(): void {
@@ -29,6 +31,15 @@ export class SortSelector implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.currentUrl = this.router.url;
+    this.sortControl.valueChanges.subscribe(value => {
+      if (value) {
+        this.moviesService.setSort(value);
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.moviesService.setSort('');
   }
 
   @HostListener("document:click", ["$event"])

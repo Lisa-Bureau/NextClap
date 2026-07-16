@@ -167,6 +167,13 @@ export class MoviesService {
         );
     }
 
+    private activeSortSubject = new BehaviorSubject<string>('');
+    activeSort$ = this.activeSortSubject.asObservable();
+
+    setSort(condition: string) {
+        this.activeSortSubject.next(condition);
+    }
+
     /**
      * Applique un tri de sécurité drastique sur les données brutes de TMDB.
      * L'API TMDB incluant des ressorties de vieux films, des fiches incomplètes ou non traduites,
@@ -178,10 +185,10 @@ export class MoviesService {
      * @returns {Movie[]} Tableau filtré, nettoyé et documenté avec le nom des genres.
      * @private
      */
-    private mapAndFilterGenres(movies: Movie[], genreId?: number, targetDate?: Date, releaseDates?: string[], minPopularity?: number): Movie[] {
+    private mapAndFilterGenres(movies: Movie[], genreId?: number, targetDate?: Date, releaseDates?: string[], minPopularity?: number, sortBy?: string): Movie[] {
         const currentYear = targetDate ? targetDate.getFullYear() : new Date().getFullYear();
 
-        return movies
+        const processedMovies = movies
             // 1. Cohérence des données : Élimination des fiches sans titre
             .filter(movie => movie.title?.trim() !== '')
 
@@ -234,6 +241,28 @@ export class MoviesService {
                 ...movie,
                 genres: this.genresService.getGenreNames(movie.genre_ids)
             }));
+
+            if (sortBy) {
+                const today = new Date().getTime();
+
+                processedMovies.sort((a, b) => {
+                    const dateA = new Date(a.release_date).getTime();
+                    const dateB = new Date(b.release_date).getTime();
+
+                    switch (sortBy) {
+                        case "recent":
+                            return Math.abs(dateA - today) - Math.abs(dateB - today);
+                        case "oldest" :
+                            return Math.abs(dateB - today) - Math.abs(dateA - today);
+                        case "popular" :
+                            return b.popularity -a.popularity;
+                        default:
+                            return 0;
+                    }
+                })
+            }
+
+            return processedMovies;
     }
 
     /**
@@ -242,7 +271,7 @@ export class MoviesService {
      * @param {number} [genreId] - ID du genre pour le filtrage optionnel.
      * @returns {Observable<Movie[]>} Flux de films à venir nettoyés et filtrés.
      */
-    getMovieReleasesFrenchCinema(genreId?: number): Observable<Movie[]> {
+    getMovieReleasesFrenchCinema(genreId?: number, sortBy?: string): Observable<Movie[]> {
         
         const currentWednesday = this.dateUtilsService.getCurrentWednesday();
         
@@ -255,7 +284,7 @@ export class MoviesService {
                 'release_date.gte': this.dateUtilsService.formatDate(currentWednesday), 
                 'release_date.lte': this.dateUtilsService.formatDate(currentWednesday)
             })),
-            map(response => this.mapAndFilterGenres(response.results, genreId, currentWednesday))
+            map(response => this.mapAndFilterGenres(response.results, genreId, currentWednesday, undefined, undefined, sortBy))
         );
     }
 
@@ -265,7 +294,7 @@ export class MoviesService {
      * @param {number} [genreId] - ID du genre pour le filtrage optionnel.
      * @returns {Observable<Movie[]>} Flux de films à venir nettoyés et filtrés.
      */
-    getUpcomingFrenchCinemaMovies(genreId?: number): Observable<Movie[]> {
+    getUpcomingFrenchCinemaMovies(genreId?: number, sortBy?: string): Observable<Movie[]> {
 
         const startDate = this.dateUtilsService.getNextWednesday();
         const endDate = this.dateUtilsService.getNextMonth(); 
@@ -280,7 +309,7 @@ export class MoviesService {
                 'release_date.gte': this.dateUtilsService.formatDate(startDate), 
                 'release_date.lte': this.dateUtilsService.formatDate(endDate)  
             })),
-            map(response => this.mapAndFilterGenres(response.results, genreId, startDate, releaseDates)),
+            map(response => this.mapAndFilterGenres(response.results, genreId, startDate, releaseDates, undefined, sortBy)),
         );
     }
 
@@ -290,7 +319,7 @@ export class MoviesService {
      * @param {number} [genreId] - ID du genre pour le filtrage optionnel.
      * @returns {Observable<Movie[]>} Flux de films à venir nettoyés et filtrés.
      */
-    getNowPlayingFrenchCinemaMovies(genreId?: number): Observable<Movie[]> {
+    getNowPlayingFrenchCinemaMovies(genreId?: number, sortBy?: string): Observable<Movie[]> {
 
         const startDate = this.dateUtilsService.getPreviousWednesday();
         const endDate = this.dateUtilsService.getCurrentWednesday(); 
@@ -306,7 +335,7 @@ export class MoviesService {
                 'release_date.gte': this.dateUtilsService.formatDate(startDate), 
                 'release_date.lte': this.dateUtilsService.formatDate(endDate)  
             })),
-            map(response => this.mapAndFilterGenres(response.results, genreId, startDate, releaseDates, minPopularity)),
+            map(response => this.mapAndFilterGenres(response.results, genreId, startDate, releaseDates, minPopularity, sortBy)),
         );
     }
 
