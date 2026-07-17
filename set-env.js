@@ -10,18 +10,21 @@ if (!fs.existsSync(dirPath)) {
   fs.mkdirSync(dirPath, { recursive: true });
 }
 
-// 2. On récupère les variables que tu as définies dans l'interface Vercel/Netlify
-// Si elles n'existent pas (en local par exemple), on met des valeurs vides par défaut
+// 2. On récupère les variables et on retire les éventuels guillemets/apostrophes parasites
 const isProduction = process.env.production === 'true';
-const tmdbToken = process.env.tmdbToken || '';
-const tmdbUrl = process.env.tmdbUrl || '';
 
-// 3. On prépare le contenu exact du fichier environment.ts
-const envConfigFile = `
-export const environment = {
+let tmdbToken = (process.env.tmdbToken || '').trim();
+// Si le token commence et finit par des guillemets ou apostrophes, on les enlève
+tmdbToken = tmdbToken.replace(/^['"]|['"]$/g, '');
+
+let tmdbUrl = (process.env.tmdbUrl || '').trim();
+tmdbUrl = tmdbUrl.replace(/^['"]|['"]$/g, '');
+
+// 3. On prépare le contenu du fichier (avec des backticks ` pour être tranquille)
+const envConfigFile = `export const environment = {
   production: ${isProduction},
-  tmdbToken: '${tmdbToken}',
-  tmdbUrl: '${tmdbUrl}'
+  tmdbToken: \`${tmdbToken}\`,
+  tmdbUrl: \`${tmdbUrl}\`
 };
 `;
 
