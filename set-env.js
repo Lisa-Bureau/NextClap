@@ -12,19 +12,14 @@ if (!fs.existsSync(dirPath)) {
 
 // 2. On récupère les variables et on retire les éventuels guillemets/apostrophes parasites
 const isProduction = process.env.production === 'true';
+const tmdbToken = (process.env.tmdbToken || '').trim();
+const tmdbUrl = (process.env.tmdbUrl || '').trim();
 
-let tmdbToken = (process.env.tmdbToken || '').trim();
-// Si le token commence et finit par des guillemets ou apostrophes, on les enlève
-tmdbToken = tmdbToken.replace(/^['"]|['"]$/g, '');
-
-let tmdbUrl = (process.env.tmdbUrl || '').trim();
-tmdbUrl = tmdbUrl.replace(/^['"]|['"]$/g, '');
-
-// 3. On prépare le contenu du fichier (avec des backticks ` pour être tranquille)
+// 3. On utilise JSON.stringify pour injecter proprement les chaînes de caractères
 const envConfigFile = `export const environment = {
   production: ${isProduction},
-  tmdbToken: \`${tmdbToken}\`,
-  tmdbUrl: \`${tmdbUrl}\`
+  tmdbToken: ${JSON.stringify(tmdbToken)},
+  tmdbUrl: ${JSON.stringify(tmdbUrl)}
 };
 `;
 
