@@ -22,20 +22,14 @@ export class MovieReleases implements OnInit {
               private route: ActivatedRoute,
               private dateUtilsService: DateUtilsService) {};
 
-  filterMoviesByGenre(genreId?: number): void {
-    this.movieReleases$ = this.moviesService.getMovieReleasesFrenchCinema(genreId);
-  }
-
-  showAllMovies(): void {
-    this.movieReleases$ = this.moviesService.getMovieReleasesFrenchCinema();
-  }
-
   ngOnInit(): void {
     this.movieReleases$ = this.route.queryParams.pipe(
       switchMap(params => {
+        const genreParam = params['genre'];
+        const currentGenreId = genreParam ? Number(genreParam) : undefined;
         const currentSort = params['sort'] || '';
         
-        return this.moviesService.getMovieReleasesFrenchCinema(undefined, currentSort);
+        return this.moviesService.getMovieReleasesFrenchCinema(currentGenreId, currentSort);
       })
     );
 

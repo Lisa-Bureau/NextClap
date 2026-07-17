@@ -6,7 +6,7 @@
     <app-sort-selector />
 </header>
 
-<app-genre-selector (genreSelected)="genreSelected.emit($event)" />
+<app-genre-selector />
 
 <section class="movieGrid">
     @for (movie of movies$ | async; track movie.id) {

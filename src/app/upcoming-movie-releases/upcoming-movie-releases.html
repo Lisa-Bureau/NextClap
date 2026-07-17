@@ -1,6 +1,5 @@
 <app-movie-list
     title="Les Sorties à Venir"
     [subtitle]="'Les sorties du ' + (startDay | date:'d MMMM yyyy') + ' au ' + (endDay | date:'d MMMM yyyy')"
-    [movies$]="movieUpcoming$"
-    (genreSelected)="filterMoviesByGenre($event)">   
+    [movies$]="movieUpcoming$">   
 </app-movie-list>
