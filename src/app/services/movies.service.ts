@@ -2,10 +2,10 @@ import { Injectable } from "@angular/core";
 import { BehaviorSubject, EMPTY, expand, forkJoin, map, Observable, reduce, switchMap, tap } from "rxjs";
 import { HttpClient } from "@angular/common/http";
 import { DiscoverMoviesResponse, Movie } from "../models/movie";
-import { environment } from '../../environments/environment';
 import { GenresService } from "./genres.service";
 import { DateUtilsService } from "./date-utils.service";
 import { MovieDetail } from "../models/movie-details";
+import { environment } from "@env/environment";
 
 @Injectable({
     providedIn: "root"

@@ -2,7 +2,8 @@ import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { map, Observable } from "rxjs";
 import { Genre, MovieGenres } from "../models/movie-genres";
-import { environment } from "../../environments/environment";
+import { environment } from "@env/environment";
+
 
 @Injectable({
     providedIn: "root"
