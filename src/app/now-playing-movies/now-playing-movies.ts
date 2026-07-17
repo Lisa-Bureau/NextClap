@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MovieList } from '../movie-list/movie-list';
-import { Observable, switchMap, tap } from 'rxjs';
+import { Observable, switchMap } from 'rxjs';
 import { Movie } from '../models/movie';
 import { MoviesService } from '../services/movies.service';
 import { ActivatedRoute } from '@angular/router';
@@ -18,20 +18,14 @@ export class NowPlayingMovies implements OnInit {
   constructor(private moviesService: MoviesService,
               private route: ActivatedRoute) {};
 
-  filterMoviesByGenre(genreId?: number): void {
-    this.movieNowPlaying$ = this.moviesService.getNowPlayingFrenchCinemaMovies(genreId);
-  }
-
-  showAllMovies(): void {
-    this.movieNowPlaying$ = this.moviesService.getNowPlayingFrenchCinemaMovies();
-  }
-
   ngOnInit(): void {
     this.movieNowPlaying$ = this.route.queryParams.pipe(
       switchMap(params => {
+        const genreParam = params['genre'];
+        const currentGenreId = genreParam ? Number(genreParam) : undefined;
         const currentSort = params['sort'] || '';
         
-        return this.moviesService.getNowPlayingFrenchCinemaMovies(undefined, currentSort);
+        return this.moviesService.getNowPlayingFrenchCinemaMovies(currentGenreId, currentSort);
       })
     );
   }

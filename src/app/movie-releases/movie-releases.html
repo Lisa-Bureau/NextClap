@@ -1,6 +1,5 @@
 <app-movie-list
     title="Les Sorties de la Semaine"
     [subtitle]="'Les sorties du ' + (startDay | date:'d MMMM yyyy')"
-    [movies$]="movieReleases$"
-    (genreSelected)="filterMoviesByGenre($event)">
+    [movies$]="movieReleases$">
 </app-movie-list>

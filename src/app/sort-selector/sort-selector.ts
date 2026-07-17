@@ -41,7 +41,7 @@ export class SortSelector implements OnInit {
    * Initialisation du composant
    */
   ngOnInit(): void {
-    // 1. Récupère l'URL de la page courante au chargement
+    // Récupère l'URL de la page courante au chargement
     this.currentUrl = this.router.url;
 
     // 1. Récupération "one-shot" de la valeur du paramètre '?sort=' dans l'URL actuelle.

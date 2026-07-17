@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { MoviesService } from '../services/movies.service';
-import { GenresService } from '../services/genres.service';
 import { DatePipe } from '@angular/common';
 import { Observable, switchMap } from 'rxjs';
 import { Movie } from '../models/movie';
@@ -24,23 +23,17 @@ export class UpcomingMovieReleases implements OnInit{
               private route: ActivatedRoute,
               private dateUtilsService: DateUtilsService) {};  
 
-  filterMoviesByGenre(genreId?: number): void {
-    this.movieUpcoming$ = this.moviesService.getUpcomingFrenchCinemaMovies(genreId);
-  }
-
-  showAlMovies(): void {
-    this.movieUpcoming$ = this.moviesService.getUpcomingFrenchCinemaMovies();
-  }
-
   ngOnInit(): void {
     this.startDay = this.dateUtilsService.getNextWednesday();
     this.endDay = this.dateUtilsService.getNextMonth();
 
     this.movieUpcoming$ = this.route.queryParams.pipe(
       switchMap(params => {
+        const genreParam = params['genre'];
+        const currentGenreId = genreParam ? Number(genreParam) : undefined;
         const currentSort = params['sort'] || '';
 
-        return this.moviesService.getUpcomingFrenchCinemaMovies(undefined, currentSort);
+        return this.moviesService.getUpcomingFrenchCinemaMovies(currentGenreId, currentSort);
       })
     );
   }

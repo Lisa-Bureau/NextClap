@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Movie } from '../models/movie';
 import { GenreSelector } from '../genre-selector/genre-selector';
@@ -18,5 +18,4 @@ export class MovieList {
   @Input() subtitle!: string;
   @Input() movies$!: Observable<Movie[]>;
 
-  @Output() genreSelected = new EventEmitter<number | undefined>();
 }

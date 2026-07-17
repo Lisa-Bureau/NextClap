@@ -1,8 +1,9 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { AsyncPipe, UpperCasePipe, NgClass } from '@angular/common';
 import { Genre } from '../models/movie-genres';
 import { GenresService } from '../services/genres.service';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-genre-selector',
@@ -12,20 +13,29 @@ import { GenresService } from '../services/genres.service';
 })
 export class GenreSelector implements OnInit {
 
-  @Output() genreSelected = new EventEmitter<number | undefined>();
   movieGenres$!: Observable<Genre[]>;
   genreActuallySelected?: number;
 
-  constructor(private genresService: GenresService) {};
+  constructor(private genresService: GenresService,
+              private route: ActivatedRoute,
+              private router: Router) {};
 
   selectGenre(genreId: number): void {
-    this.genreSelected.emit(genreId);
-    this.genreActuallySelected = genreId;
+    const paramValue = genreId?.toString() ?? null;
+
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { genre: paramValue },
+      queryParamsHandling: 'merge'
+    });
   }
 
   showAllMovies(): void {
-    this.genreSelected.emit(undefined);
-    this.genreActuallySelected = undefined;
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { genre: null },
+      queryParamsHandling: 'merge'
+    });
   }
 
   ngOnInit(): void {
@@ -34,5 +44,11 @@ export class GenreSelector implements OnInit {
         genres.filter(genre => genre.id !== 10770)
       )
     );
+
+    this.route.queryParams.subscribe(params => {
+      const genreParam = params['genre'];
+
+      this.genreActuallySelected = genreParam ? Number(genreParam) : undefined;
+    });
   }
 }
