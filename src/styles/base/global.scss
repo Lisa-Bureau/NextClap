@@ -14,4 +14,8 @@ button {
 
 a {
   text-decoration: none;
+
+    &:visited {
+        color: colors.$first-text-color;
+    }
 }
