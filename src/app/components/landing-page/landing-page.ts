@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { forkJoin, map, Observable } from 'rxjs';
-import { Movie, MovieWithTag } from '../models/movie';
-import { MoviesService } from '../services/movies.service';
+import { Movie, MovieWithTag } from '../../models/movie';
+import { MoviesService } from '../../services/movies.service';
 import { AsyncPipe } from '@angular/common';
 import { MovieCard } from '../movie-card/movie-card';
 import { HeadlineMovieCard } from '../headline-movie-card/headline-movie-card';

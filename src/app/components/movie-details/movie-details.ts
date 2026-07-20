@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { map, Observable, shareReplay, switchMap } from 'rxjs';
-import { MoviesService } from '../services/movies.service';
-import { MovieDetail } from '../models/movie-details';
+import { MoviesService } from '../../services/movies.service';
+import { MovieDetail } from '../../models/movie-details';
 import { AsyncPipe, DatePipe, NgStyle, UpperCasePipe } from '@angular/common';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { NavigationService } from '../services/navigation.service';
+import { NavigationService } from '../../services/navigation.service';
 
 @Component({
   selector: 'app-movie-details',

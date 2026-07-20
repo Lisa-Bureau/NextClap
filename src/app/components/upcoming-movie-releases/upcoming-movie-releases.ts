@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { MoviesService } from '../services/movies.service';
+import { MoviesService } from '../../services/movies.service';
 import { DatePipe } from '@angular/common';
 import { Observable, switchMap } from 'rxjs';
-import { Movie } from '../models/movie';
+import { Movie } from '../../models/movie';
 import { MovieList } from '../movie-list/movie-list';
-import { DateUtilsService } from '../services/date-utils.service';
+import { DateUtilsService } from '../../services/date-utils.service';
 import { ActivatedRoute } from '@angular/router';
 
 @Component({

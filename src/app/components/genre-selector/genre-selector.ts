@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { AsyncPipe, UpperCasePipe, NgClass } from '@angular/common';
-import { Genre } from '../models/movie-genres';
-import { GenresService } from '../services/genres.service';
+import { Genre } from '../../models/movie-genres';
+import { GenresService } from '../../services/genres.service';
 import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({

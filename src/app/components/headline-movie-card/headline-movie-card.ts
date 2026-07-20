@@ -1,5 +1,5 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, Input } from '@angular/core';
-import { MovieWithTag } from '../models/movie';
+import { MovieWithTag } from '../../models/movie';
 import { Router } from '@angular/router';
 import { NgStyle, UpperCasePipe } from '@angular/common';
 

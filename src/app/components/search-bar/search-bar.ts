@@ -1,6 +1,6 @@
 import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
-import { Movie } from '../models/movie';
-import { MoviesService } from '../services/movies.service';
+import { Movie } from '../../models/movie';
+import { MoviesService } from '../../services/movies.service';
 import { Router } from '@angular/router';
 
 @Component({
