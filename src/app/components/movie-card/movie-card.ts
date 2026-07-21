@@ -10,11 +10,18 @@ import { Router } from '@angular/router';
   styleUrl: './movie-card.scss',
 })
 export class MovieCard {
+
+  // Input contenant les informations du film transmis par le composant parent
   @Input() movie!: Movie;
 
-  constructor(private route: Router) {};
+  constructor(private router: Router) {};
 
+  /**
+   * Redirige l'utilisateur vers la page de détails du film lors du clic sur la carte
+   */
   onViewMovieDetails() {
-    this.route.navigateByUrl(`movie/${this.movie.id}`);
+    if (this.movie?.id) {
+      this.router.navigateByUrl(`movie/${this.movie.id}`);
+    }
   }
 }
