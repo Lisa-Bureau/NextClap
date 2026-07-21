@@ -53,12 +53,17 @@ section {
     margin-top: 5rem;
     padding: 0 2rem;
 
-    & a {
+    & .link {
         @include section-title;
+        color: $first-text-color;
         
         display: flex;
         align-items: center;
         gap: 0.5rem;
+
+        &:visited {
+            color: $first-text-color;
+        }
 
         & > img {
             width: 2rem;
