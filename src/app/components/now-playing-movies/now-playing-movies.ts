@@ -13,12 +13,14 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class NowPlayingMovies implements OnInit {
 
+  // Flux réactif réagissant aux filtres de l'URL pour charger les films en salle
   movieNowPlaying$!: Observable<Movie[]>;
 
   constructor(private moviesService: MoviesService,
               private route: ActivatedRoute) {};
 
   ngOnInit(): void {
+    // switchMap permet d'annuler la requête précédente si l'utilisateur change de filtre très vite
     this.movieNowPlaying$ = this.route.queryParams.pipe(
       switchMap(params => {
         const genreParam = params['genre'];
