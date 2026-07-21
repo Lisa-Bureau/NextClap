@@ -54,6 +54,10 @@
         }
     }
 
+    &__title {
+        color: $first-text-color;
+    }
+
     // Conteneur des étiquettes (genre, statut)
     &__tags {
         display: flex;
@@ -67,6 +71,7 @@
         backdrop-filter: blur(12px);
         padding: 0.25rem 0.5rem;
         border-radius: $radius-sm;
+        color: $first-text-color;
         @include tag-text;
 
         // Variante de couleur pour les étiquettes importantes
