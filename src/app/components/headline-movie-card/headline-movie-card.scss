@@ -1,8 +1,10 @@
+// Importation des tokens de design
 @use 'abstracts/radius' as *;
 @use 'abstracts/colors' as *;
 @use 'abstracts/typography' as *;
 @use 'abstracts/breakpoints' as *;
 
+// Carte principale du film à l'affiche (Hero Banner)
 .movieHero {
     width: 100%;
     height: 450px;
@@ -18,16 +20,20 @@
     position: relative; 
     overflow: hidden;
     z-index: 1;
+    cursor: pointer;
+
+    // Astuce d'optimisation GPU pour éviter les clignotements sur mobile lors du blur
     transform: translateZ(0);
     -webkit-transform: translateZ(0);
     isolation: isolate;
-    cursor: pointer;
 
+    // Adaptabilité tablette / desktop
     @include md {
         height: 500px;
         padding: 0 2rem 2.5rem 2rem;
     }
 
+    // Pseudo-élément pour gérer l'arrière-plan flouté dynamique via variable CSS
     &::before {
         content: '';
         position: absolute;
@@ -39,20 +45,23 @@
         background-size: cover;
         background-position: center;
         filter: blur(1.5px); 
-        transform: scale(1.05); 
+        transform: scale(1.05);     // Évite les bords blancs causés par le flou (filter blur)
         z-index: -1;
 
+        // Sur grand écran, on remplace le poster vertical par le backdrop horizontal
         @include md {
             background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), var(--backdrop);
         }
     }
 
+    // Conteneur des étiquettes (genre, statut)
     &__tags {
         display: flex;
         gap: 0.5rem;
         flex-wrap: wrap;
     }
 
+    // Style de base d'une étiquette (Badge)
     &__tag {
         background-color: rgba($first-text-color, 0.1);
         backdrop-filter: blur(12px);
@@ -60,11 +69,13 @@
         border-radius: $radius-sm;
         @include tag-text;
 
+        // Variante de couleur pour les étiquettes importantes
         &--red {
             background-color: $tag-color;
         }
     }
 
+    // Résumé du film avec limitation à 3 lignes (Ellipsis)
     &__synopsis {
         @include body-text;
         color: $second-text-color;
@@ -74,6 +85,7 @@
         -webkit-line-clamp: 3;
         overflow: hidden;
 
+        // Limite la largeur de lecture pour le confort visuel sur grand écran
         @include md {
             max-width: 80ch;
         }

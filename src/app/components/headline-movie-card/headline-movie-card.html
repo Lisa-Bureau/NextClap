@@ -1,9 +1,11 @@
+<!-- Conteneur principal cliquable définissant les variables CSS d'images (Poster / Backdrop) -->
 <div class="movieHero" (click)="onViewMovieDetails()" [ngStyle]="{ 
         '--poster': 'url(https://image.tmdb.org/t/p/original' + headlineMovie.poster_path + ')',
         '--backdrop': 'url(https://image.tmdb.org/t/p/original' + headlineMovie.backdrop_path + ')'
      }">
     <div class="movieHero__tags">
 
+        <!-- Affichage conditionnel de l'étiquette selon le statut du film -->
         @if (headlineMovie.categoryTag === 'release') {
             <p class="movieHero__tag movieHero__tag--red">SORTIE</p>
         } @else if (headlineMovie.categoryTag === 'upcoming') {
@@ -12,7 +14,10 @@
             <p class="movieHero__tag movieHero__tag--red">EN SALLE</p>
         }
 
-        <p class="movieHero__tag">{{headlineMovie.genres[0] | uppercase}}</p>
+        <!-- Premier genre du film (affiché en majuscules) -->
+        @if (headlineMovie.genres.length) {
+            <p class="movieHero__tag">{{headlineMovie.genres[0] | uppercase}}</p>
+        }
         
     </div>
     <h1>{{headlineMovie.title}}</h1>
