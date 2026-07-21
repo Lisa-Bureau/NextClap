@@ -1,13 +1,18 @@
+<!-- En-tête de la liste avec titre, sous-titre et composant de tri -->
 <header>
     <div class="titles">
         <h2 class="title">{{title}}</h2>
         <p class="subtitle">{{subtitle}}</p>
     </div>
+
+    <!-- Composant autonome de sélection du tri (ex: par date, par popularité) -->
     <app-sort-selector />
 </header>
 
+<!-- Filtre par genres (Composant autonome) -->
 <app-genre-selector />
 
+<!-- Grille d'affichage des films déballée via le pipe async -->
 <section class="movieGrid">
     @for (movie of movies$ | async; track movie.id) {
         <app-movie-card [movie]="movie" />
