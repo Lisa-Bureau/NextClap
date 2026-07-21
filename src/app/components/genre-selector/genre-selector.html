@@ -1,6 +1,6 @@
 <section class="movieGenre">
-    <button class="movieGenre__btn" [ngClass]="{`movieGenre__btn--selected`: !genreActuallySelected}" (click)="showAllMovies()">TOUT</button>
-    @for (genre of movieGenres$ | async; track $index) {
-        <button class="movieGenre__btn" [ngClass]="{'movieGenre__btn--selected': genreActuallySelected === genre.id}" (click)="selectGenre(genre.id)">{{genre.name | uppercase}}</button>
+    <button class="movieGenre__btn" [ngClass]="{`movieGenre__btn--selected`: !selectedGenreId}" (click)="showAllMovies()">TOUT</button>
+    @for (genre of movieGenres$ | async; track genre.id) {
+        <button class="movieGenre__btn" [ngClass]="{'movieGenre__btn--selected': selectedGenreId === genre.id}" (click)="selectGenre(genre.id)">{{genre.name | uppercase}}</button>
     }
 </section>

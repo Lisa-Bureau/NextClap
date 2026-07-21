@@ -1,23 +1,28 @@
+// Importation des tokens de style
 @use 'abstracts/radius' as *;
 @use 'abstracts/colors' as *;
 @use 'abstracts/typography' as *;
 @use 'abstracts/breakpoints' as *;
 
+// Composant carte de film
 .movieCard {
+    // Conteneur visuel de l'affiche (Image + Overlay)
     &__media {
         position: relative;
-        aspect-ratio: 2 / 3;
+        aspect-ratio: 2 / 3;    // Ratio d'aspect standard pour une affiche de film
         overflow: hidden;
         border-radius: $radius-md;
     }
 
+    // Image de l'affiche
     &__poster {
         width: 100%;
         height: 100%;
-        object-fit: cover;   
+        object-fit: cover;   // Empêche l'image de se déformer
         transition: transform 0.5s ease;     
     }    
 
+    // Gradient sombre en bas de l'affiche pour garantir la lisibilité de la date
     &__overlay {
         position: absolute;
         left: 0;
@@ -27,6 +32,7 @@
         background: linear-gradient(to top, rgba(11, 11, 12, 1) 0%,rgba(11, 11, 12, 0) 100%);
     }
 
+    // Date de sortie positionnée sur l'affiche
     &__releaseDate {
         position: absolute;
         left: 1rem;
@@ -35,6 +41,7 @@
         color: $accent-color;
     }
 
+    // Titre sous l'affiche
     &__title {
         margin-top: 0.5rem;
         @include card-title;
@@ -42,20 +49,24 @@
         transition: color 150ms;
     }
 
-    &__infos {
+    // Genres sous le titre
+    &__genres {
         @include body-text;
         color: $third-text-color;
     }
 
+    // Effets au survol (Hover) réservés aux écrans ordinateurs (desktop)
     @include lg {
         &:hover {
             cursor: pointer; 
         }
 
+        // Effet de zoom fluide sur l'affiche au survol
         &:hover &__poster {
             transform: scale(1.05);              
         }
 
+        // Changement de couleur du titre au survol
         &:hover &__title {
             color: $accent-color;
         }

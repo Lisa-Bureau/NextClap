@@ -1,9 +1,16 @@
+<!-- Conteneur de l'en-tête fixe avec bascule de classe dynamique lorsque le menu mobile est ouvert -->
 <header [class.header-menu-opened]="menuIsOpen">
+    
     <div class="header-container-right">
-        <button class="menu-btn" (click)="toggleMenu()">
+        <!-- Bouton burger pour ouvrir/fermer le menu sur mobile -->
+        <button class="menu-btn" (click)="toggleMenu()" aria-label="Ouvrir le menu">
             <img src="/icons/menu-burger.png" alt="menu">
         </button>
+
+        <!-- Logo ramenant vers la page d'accueil -->
         <a class="link-back-home" routerLink="">NextCLAP.</a>
+
+        <!-- Navigation principale avec gestion de la classe active d'Angular (routerLinkActive) -->
         <nav class="links-container" [class.menu-open]="menuIsOpen">
             <a class="link-page" routerLink="/sorties" (click)="menuIsOpen ? toggleMenu() : null" routerLinkActive="active">SORTIES</a>
             <a class="link-page" routerLink="/prochainement" (click)="menuIsOpen ? toggleMenu() : null" routerLinkActive="active">PROCHAINEMENT</a>
@@ -11,7 +18,6 @@
         </nav>
     </div>
 
+    <!-- Composant autonome de la barre de recherche -->
     <app-search-bar />
 </header>
-
-

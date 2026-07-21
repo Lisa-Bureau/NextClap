@@ -1,12 +1,15 @@
+<!-- Bouton permettant d'ouvrir ou fermer le menu déroulant de tri -->
 <button class="sort-btn" (click)="toggleSort()">
     <img src="/icons/sort.png" alt="sort">
 </button>
 
+<!-- Menu déroulant affiché uniquement si isDropdownOpen est vrai -->
 @if (isDropdownOpen) {
     <div class="dropdown">
         <p>Trier les films par :</p>
 
         <div class="sort-container">
+            <!-- Affiche toutes les options de tri si l'utilisateur n'est pas sur la page /sorties -->
             @if(currentUrl !== "/sorties") {
                 @for(item of sortingCondition; track item.key) {
                     <div class="sort-option">
@@ -15,6 +18,7 @@
                     </div>
                 }
             } @else {
+                <!-- Sur la page /sorties, restreint le tri à une seule option spécifique (index 2) -->
                 <div class="sort-option">
                     <input type="radio" [value]="sortingCondition[2].key" name="sortGroup" [formControl]="sortControl">
                     <label>{{sortingCondition[2].label}}</label>

@@ -15,7 +15,10 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class MovieReleases implements OnInit {
 
+  // Flux réactif réagissant aux filtres de l'URL pour charger les sorties cinéma
   movieReleases$!: Observable<Movie[]>;
+
+  // Date du mercredi de la semaine en cours (jour officiel des sorties ciné en France)
   startDay!: Date;
   
   constructor(private moviesService: MoviesService,
@@ -23,6 +26,7 @@ export class MovieReleases implements OnInit {
               private dateUtilsService: DateUtilsService) {};
 
   ngOnInit(): void {
+    // switchMap permet d'annuler la requête précédente si l'utilisateur change de filtre très vite
     this.movieReleases$ = this.route.queryParams.pipe(
       switchMap(params => {
         const genreParam = params['genre'];
@@ -33,6 +37,7 @@ export class MovieReleases implements OnInit {
       })
     );
 
+    // Calcul de la date de départ (mercredi courant)
     this.startDay = this.dateUtilsService.getCurrentWednesday();
   } 
 

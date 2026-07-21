@@ -1,8 +1,11 @@
+// Importation des modules d'abstractions (Design Tokens)
+// Utilisation de 'as *' pour utiliser directement les variables et mixins sans préfixe
 @use 'abstracts/typography' as *;
 @use 'abstracts/breakpoints' as *;
 @use 'abstracts/colors' as *;
 @use 'abstracts/radius' as *;
 
+// Conteneur principal de la liste des genres (Bloc BEM)
 .movieGenre {
     width: 85vw;
     height: 2rem;
@@ -10,29 +13,35 @@
     margin-top: 2rem;
     display: flex;
     gap: 0.5rem;
+
+    // Défilement horizontal si les boutons dépassent de l'écran (pratique sur mobile)
     overflow-x: scroll;
 
+    // Bouton de genre individuel (Élément BEM)
     &__btn {
-        @include button-text;
+        @include button-text;               // Mixin pour la typographie du bouton
         color: $second-text-color;
         background-color: transparent;
         border: 1px solid $border-color;
         border-radius: $radius-md;
         padding: 0.75rem 1.5rem;
-        white-space: nowrap;
+        white-space: nowrap;                // Empêche le texte du bouton de passer sur 2 lignes
         display: flex;
         justify-content: center;
         align-items: center;
         cursor: pointer;
         transition: color 150ms;
 
+        // État actif / sélectionné du bouton (Modificateur BEM)
         &--selected {
             color: $background-color;
             background-color: $first-text-color;
             border: none;
         }
 
+        // Survol (Hover) appliqué uniquement sur grand écran (Desktop)
         @include lg {
+            // L'effet au survol s'applique uniquement aux boutons NON sélectionnés
             &:not(.movieGenre__btn--selected):hover {
                 border: 1px solid $third-text-color;
                 color: $first-text-color;

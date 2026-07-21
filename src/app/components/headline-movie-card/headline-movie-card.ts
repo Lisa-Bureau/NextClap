@@ -12,11 +12,17 @@ import { NgStyle, UpperCasePipe } from '@angular/common';
 })
 export class HeadlineMovieCard {
 
+  // Donnée du film mise en avant transmise par le composant parent
   @Input() headlineMovie!: MovieWithTag;
 
-  constructor(private route: Router) {};
+  constructor(private router: Router) {};
 
+  /**
+   * Redirige l'utilisateur vers la page de détail du film
+   */
   onViewMovieDetails() {
-    this.route.navigateByUrl(`movie/${this.headlineMovie.id}`);
+    if (this.headlineMovie?.id) {
+      this.router.navigateByUrl(`movie/${this.headlineMovie.id}`);
+    }
   }
 }

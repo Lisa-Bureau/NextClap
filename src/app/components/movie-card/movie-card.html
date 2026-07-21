@@ -1,10 +1,20 @@
+<!-- La balise <button> englobe toute la carte pour offrir un composant 100% accessible au clavier et aux lecteurs d'écran -->
 <button (click)="onViewMovieDetails()" class="movieCard">
+    
     <div class="movieCard__media">
+        
+        <!-- Affiche du film récupérée via l'API TMDB en taille w500 -->
         <img class="movieCard__poster" [src]="`https://image.tmdb.org/t/p/w500${movie.poster_path}`" [alt]="movie.title">
+        
+        <!-- Dégradé noir et date de sortie formatée -->
         <div class="movieCard__overlay">
             <p class="movieCard__releaseDate">{{movie.release_date | date: "d MMMM yyyy"}}</p>
         </div>
     </div>
+
+    <!-- Titre du film -->
     <p class="movieCard__title">{{movie.title}}</p>
-    <p class="movieCard__infos">{{movie.genres.join(' • ')}}</p>
+
+    <!-- Liste des genres joints par un point médian (•) -->
+    <p class="movieCard__genres">{{movie.genres.join(' • ')}}</p>
 </button>

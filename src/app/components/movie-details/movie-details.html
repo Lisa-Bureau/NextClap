@@ -1,20 +1,34 @@
+<!-- Condition globale : s'affiche uniquement lorsque le film est chargé depuis le flux RxJS (movie$) -->
 @if (movie$ | async; as movie) {
     
+    <!-- Section d'en-tête avec image de fond floutée (backdrop) passée en variable CSS -->
     <section class="movieDetails" [ngStyle]="{ '--bg-backdrop': 'url(https://image.tmdb.org/t/p/original' + movie.backdrop_path + ')' }">
+        
+        <!-- Bouton de retour vers la page précédente -->
         <button class="movieDetails__return" (click)="goBackPage()">
             <img src="/icons/arrow.png" alt="arrow back"> 
             RETOUR
         </button>
+
+        <!-- Affiche principale du film -->
         <img class="movieDetails__poster" [src]="`https://image.tmdb.org/t/p/w500${movie.poster_path}`" [alt]="movie.title">
+        
+        <!-- Colonne des informations détaillées -->
         <div class="movieDetails__infos">
+            
             <div class="movieDetails__tags">
                 <p class="movieDetails__tag movieDetails__tag--red">SORTIE {{ frenchReleaseDate$ | async | date: "dd MMMM" | uppercase}}</p>
+                
+                <!-- Boucle sur les genres avec -->
                 @for (genre of movie.genres; track $index) {
                     <p class="movieDetails__tag">{{genre.name | uppercase}}</p>
                 }
             </div>
+
             <h1>{{movie.title}}</h1>
             <p class="movieDetails__synopsis">{{movie.overview}}</p>
+
+            <!-- Crédits : Réalisation et Casting principal -->
             <div class="movieDetails__credits">
                 <div>
                     <p class="movieDetails__credits--title">RÉALISATION</p>
@@ -29,8 +43,11 @@
         </div>
     </section>
 
+    <!-- Section de la bande-annonce vidéo YouTube -->
     <section class="movieTrailer">
         <h3>Bande-annonce</h3>
+
+        <!-- Affichage conditionnel : Vidéo iframe si l'URL existe, sinon message explicatif -->
         @if (trailerUrl$ | async; as trailerUrl) {
                 <iframe
                 class="movieTrailer__video"

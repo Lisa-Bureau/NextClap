@@ -11,12 +11,18 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
+
+    // Initialise le service de navigation dès le démarrage de l'application
     provideAppInitializer(() => { inject(NavigationService) }),
+
+    // Configuration du thème UI PrimeNG
     providePrimeNG({
         theme: {
             preset: Lara,
         }
     }),
+
+    // Définit le français comme langue par défaut pour la mise en forme (dates, monnaies)
     { provide: LOCALE_ID, useValue: 'fr-FR'}
   ]
 };

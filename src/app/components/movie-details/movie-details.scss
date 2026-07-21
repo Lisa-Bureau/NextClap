@@ -1,8 +1,10 @@
+// Importation des design tokens
 @use 'abstracts/radius' as *;
 @use 'abstracts/typography' as *;
 @use 'abstracts/colors' as *;
 @use 'abstracts/breakpoints' as *;
 
+// Conteneur principal de la fiche détail du film
 .movieDetails {
     width: 100%;
     margin-top: 3.75rem;
@@ -12,9 +14,10 @@
     flex-direction: column;
     gap: 1.5rem;
 
+    // Passage en grille CSS sur écran ordinateur (Desktop)
     @include md {
         display: grid;
-        grid-template-columns: 350px 1fr;
+        grid-template-columns: 350px 1fr;   // Colonne 1 : Poster fixe (350px), Colonne 2 : Infos du film
         gap: 2.5rem;
         position: relative;
         overflow: hidden;
@@ -22,6 +25,7 @@
         padding: 4rem;
         padding-top: 3rem;
 
+        // Arrière-plan flouté dynamique utilisant la variable CSS '--bg-backdrop'
         &::before {
             content: '';
             position: absolute;
@@ -34,7 +38,7 @@
             background-size: cover;
             background-position: center;
             filter: blur(4px);
-            transform: scale(1.05);
+            transform: scale(1.05);     // Évite les contours blancs causés par le flou
         }
     }
 
@@ -42,6 +46,7 @@
         margin-top: 5rem;
     }
 
+    // Bouton de retour en arrière
     &__return {
         @include button-text;
         color: $third-text-color;
@@ -56,10 +61,11 @@
         }
 
         @include md {
-            grid-column: 0/ 2;
+            grid-column: 1/ -1;
         }
     }
 
+    // Affiche principale du film
     &__poster {
         width: 100%;
         aspect-ratio: 2 / 3;
@@ -74,6 +80,7 @@
         }
     }
 
+    // Bloc contenant le titre, synopsis, tags et crédits
     &__infos {
         display: flex;
         flex-direction: column;
@@ -84,12 +91,14 @@
         }
     }
 
+    // Bloc contenant les étiquettes (Genres, Date de sortie)
     &__tags {
         display: flex;
         gap: 0.5rem;
         flex-wrap: wrap;
     }
 
+    // Design d'une étiquette
     &__tag {
         background-color: rgba($first-text-color, 0.1);
         backdrop-filter: blur(12px);
@@ -97,17 +106,20 @@
         border-radius: $radius-sm;
         @include tag-text;
 
+        // Variante de la couleur de fond pour la date de sortie
         &--red {
             background-color: $tag-color;
         }
     }
 
+    // Synopsis du film
     &__synopsis {
         @include body-text;
         color: $second-text-color;
-        max-width: 80ch;
+        max-width: 80ch;    // Confort de lecture optimal (80 caractères par ligne)
     }
 
+    // Section Réalisateur et Acteurs
     &__credits {
         @include tag-text;
         display: flex;
@@ -126,6 +138,7 @@
     }
 }
 
+// Section du lecteur de bande-annonce (Iframe YouTube)
 .movieTrailer {
     width: 100%;
     padding: 0 2rem;
@@ -135,12 +148,14 @@
         padding: 0 4rem;
     }
 
+    // Format 16/9ème responsive pour la vidéo
     &__video {
         width: 100%;
         aspect-ratio: 16 / 9;
         margin-top: 1rem;
     }
 
+    // Message d'erreur si la bande-annonce n'est pas disponible
     &__error {
         @include body-text;
         color: $second-text-color;

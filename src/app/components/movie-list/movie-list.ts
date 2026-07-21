@@ -14,8 +14,13 @@ import { SortSelector } from '../sort-selector/sort-selector';
 })
 export class MovieList {
 
+  // Titre principal de la page transmis par le composant parent (ex: "Les Sorties")
   @Input() title!: string;
+
+  // Sous-titre explicatif (ex: "Découvrez les films récemment sortis")
   @Input() subtitle!: string;
+
+  // Flux réactif RxJS contenant la liste des films à afficher
   @Input() movies$!: Observable<Movie[]>;
 
 }

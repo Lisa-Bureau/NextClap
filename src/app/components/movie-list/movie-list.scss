@@ -1,43 +1,48 @@
+// Importation des tokens de design
 @use 'abstracts/colors' as *;
 @use 'abstracts/typography' as *;
 @use 'abstracts/breakpoints' as *;
 @use 'abstracts/radius' as *;
 
+// En-tête de la page avec titre et sélecteur de tri
 header {
     width: 85vw;
     margin: 0 auto;
     margin-top: 6rem;
     display: flex;
     justify-content: space-between;
-    align-items: flex-end;
+    align-items: flex-end;  // Aligne le trieur sur le bas des titres
 
     @include lg {
         margin-top: 7.25rem;
     }
 }
 
+// Style du titre principal
 .title {
     color: $first-text-color;
     margin-bottom: 0.5rem;
 }
 
+// Style du sous-titre
 .subtitle {
     @include subtitle;
     color: $second-text-color;
 }
 
+// Grille de cartes de films responsive
 .movieGrid {
     display: grid;
     width: 85vw;
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr; // 1 colonne sur mobile
     gap: 1.5rem;
     margin: 2rem auto;
 
     @include md {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(2, 1fr);  // 2 colonnes sur tablette
     }
 
     @include lg {
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: repeat(4, 1fr);  // 4 colonnes sur écran ordinateur
     }
 }

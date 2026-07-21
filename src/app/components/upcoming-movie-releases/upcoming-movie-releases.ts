@@ -15,8 +15,13 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class UpcomingMovieReleases implements OnInit{
 
+  // Date de début de la période (Mercredi prochain)
   startDay!: Date;
+
+  // Date de fin de la période (Dans un mois)
   endDay!: Date;
+
+  // Flux réactif des films à venir, mis à jour automatiquement selon les paramètres de l'URL
   movieUpcoming$!: Observable<Movie[]>;
 
   constructor(private moviesService: MoviesService,
@@ -24,9 +29,11 @@ export class UpcomingMovieReleases implements OnInit{
               private dateUtilsService: DateUtilsService) {};  
 
   ngOnInit(): void {
+    // Calcul de la plage de dates pour la section "Prochainement"
     this.startDay = this.dateUtilsService.getNextWednesday();
     this.endDay = this.dateUtilsService.getNextMonth();
 
+    // switchMap permet d'annuler la requête précédente si l'utilisateur change de filtre très vite
     this.movieUpcoming$ = this.route.queryParams.pipe(
       switchMap(params => {
         const genreParam = params['genre'];

@@ -10,5 +10,6 @@ export const routes: Routes = [
     { path: "sorties", component: MovieReleases },
     { path: "prochainement", component: UpcomingMovieReleases },
     { path: "en-salle", component: NowPlayingMovies },
+    // Route dynamique pour la fiche d'un film
     { path: "movie/:id", component: MovieDetails }
 ];
