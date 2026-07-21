@@ -1,8 +1,11 @@
+<!-- Modale HTML dialog gérant l'ouverture et la fermeture au clic sur le fond (backdrop) -->
 <dialog class="modal-search" 
         #searchModal
         [class.open]="searchIsOpen"
         (click)="$event.target === searchModal ? toggleSearch(searchInput) : null"
 >
+
+    <!-- Champ de recherche texte réagissant à la saisie et au focus -->
     <input 
         type="text"
         class="search-input"
@@ -12,18 +15,22 @@
         (focus)="onSearchChange(searchInput.value)"
     >
 
+    <!-- Menu déroulant d'autocomplétion affiché uniquement si des résultats existent ou si aucun film n'est trouvé -->
     @if (isDropdownOpen) {
         <ul class="search-dropdown" [class.no-result]="filteredMovies.length === 0">
             @for (movie of filteredMovies; track movie.id) {
+                <!-- Résultat individuel : redirige vers la fiche du film au clic -->
                 <li class="search-result" (click)="goToDetail(movie.id)">
                     {{ movie.title }}
                 </li>
             } @empty {
+                <!-- Message affiché quand la recherche ne renvoie aucun résultat -->
                 <li class="search-result">Aucun résultat</li>
             }
         </ul>
     }
 
+    <!-- Bouton pour ouvrir ou fermer la barre de recherche -->
     <button class="search-btn" (click)="toggleSearch(searchInput)">
         <img src="/icons/search.png" alt="search">
     </button>

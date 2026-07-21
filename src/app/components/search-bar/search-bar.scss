@@ -173,10 +173,10 @@
     margin: 0;       // Élimine le 'margin: auto' imposé par défaut par le navigateur sur les modals
     
     // DIMENSIONS & RESPONSIVE INITIAL (MOBILE)
-    width: calc(100vw - 4.5rem); // S'adapte à la largeur de l'écran tout en laissant une marge sur les côtés
-    max-width: 250px;            // Limite la largeur maximale sur les grands smartphones
+    width: calc(100vw - 4.5rem); 
+    max-width: 250px;            
     height: auto;               
-    max-height: 200px;           // Sécurité pour éviter que la liste ne dépasse de l'écran si elle s'agrandit
+    max-height: 200px;           
 
     // DESIGN & VISUEL
     background: $surface-color;
@@ -193,13 +193,11 @@
     // Crucial : Réactive la détection du clic (pointer-events) sur le dropdown, 
     // car le conteneur parent (.modal-search) utilise 'pointer-events: none' pour être transparent aux clics.
     pointer-events: auto;
-
-    // RESPONSIVE : TABLETTES & ÉCRANS INTERMÉDIAIRES
+    
     @include md {
-        max-width: 300px;   // On donne un peu plus d'espace en largeur aux titres de films
+        max-width: 300px;   
     }
 
-    // RESPONSIVE : GRANDS ÉCRANS (ORDINATEURS)
     @include lg {
         top: 4.25rem;           // Décale le dropdown plus bas car la navbar PC est plus haute que la nav mobile
         margin-right: 1.5rem;   // Aligne proprement le dropdown avec l'icône de la barre d'outils PC
@@ -208,8 +206,8 @@
     // ÉTAT : LISTE VIDE (AUCUN RÉSULTAT)
     // S'active uniquement via Angular lorsque la recherche ne trouve rien
     &.no-result {
-        padding: 0 0.8rem;        // Supprime le padding vertical pour bien centrer le texte
-        justify-content: center;  // Centre verticalement le message "Aucun résultat"
+        padding: 0 0.8rem;        
+        justify-content: center; 
 
         // Gestion spécifique du texte d'erreur à l'intérieur du dropdown vide
         .search-result {
