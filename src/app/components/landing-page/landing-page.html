@@ -1,4 +1,5 @@
-@if (headlineMovies$ | async; as movies) {
+<!-- Carrousel mis en avant : s'affiche uniquement quand le flux RxJS émet des données -->
+@if(headlineMovies$ | async; as movies) {
     
     <p-carousel [value]="movies" 
                 [numScroll]="1" 
@@ -7,6 +8,7 @@
                 [showNavigators]="false"
                 [showIndicators]="true">
         
+        <!-- Template interne de PrimeNG pour chaque élément du carrousel -->
         <ng-template #item let-movie>
             <div class="slide-padding">
                 <app-headline-movie-card [headlineMovie]="movie"/>
@@ -17,9 +19,10 @@
 
 }
 
+<!-- Section 1 : Les Sorties de la semaine -->
 <section>
     <a class="link" routerLink="sorties">Les Sorties de la Semaine 
-        <img src="/icons/arrow.png" alt="">
+        <img src="/icons/arrow.png" alt="Voir plus">
     </a>
     <div class="movies-container">
         @for (movie of movieReleases$ | async; track movie.id) {
@@ -28,6 +31,7 @@
     </div>
 </section>
 
+<!-- Section 2 : Les Films à venir -->
 <section>
     <a class="link" routerLink="prochainement">Les Sorties à Venir
         <img src="/icons/arrow.png" alt="">
@@ -39,6 +43,7 @@
     </div>
 </section>
 
+<!-- Section 3 : Les Films actuellement en salle -->
 <section>
     <a class="link" routerLink="en-salle">Les Films à l'Affiche
         <img src="/icons/arrow.png" alt="">
