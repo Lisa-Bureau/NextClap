@@ -1,13 +1,15 @@
+// Importation des tokens de design (Couleurs, Typographies, Breakpoints)
 @use 'abstracts/colors' as *;
 @use 'abstracts/typography' as *;
 @use 'abstracts/breakpoints' as *;
 
+// Conteneur principal du Header (Fixe en haut de page)
 header {
     width: 100%;
     height: 3.75rem;
     background-color: rgba($background-color, 0.8);
     border-bottom: 1px solid $border-color;
-    backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);    // Effet de flou "Glassmorphism"
     position: fixed;
     left: 0;
     top: 0;
@@ -17,6 +19,7 @@ header {
     align-items: center;
     gap: 1.5rem;
 
+    // Ajustement visuel lorsque le menu mobile déroulant est actif
     &.header-menu-opened {
         background-color: transparent;
         backdrop-filter: none;
@@ -27,6 +30,7 @@ header {
         gap: 2.5rem;
     }
 
+    // Zone regroupant le bouton burger, le logo et les liens de navigation
     .header-container-right {
         display: flex;
         align-items: center;
@@ -40,6 +44,7 @@ header {
     }
 }
 
+// Bouton du menu burger (visible uniquement sur écran mobile / tablette)
 .menu-btn {
     width: 2rem;
     height: 2rem;
@@ -56,11 +61,13 @@ header {
         height: 2rem;
     }
 
+    // Masqué sur grand écran (Desktop)
     @include lg {
         display: none;
     }
 }
 
+// Logo / Lien de retour vers l'accueil
 .link-back-home {
     @include section-title;
     color: $accent-color;
@@ -72,14 +79,17 @@ header {
     }
 }
 
+// Conteneur des liens de navigation
 .links-container {
-    display: none;
+    display: none;  // Masqué par défaut sur mobile
 
+    // Affichage horizontal classique sur grand écran (Desktop)
     @include lg {
         display: flex;
         gap: 2rem;
     }
 
+    // État ouvert sur mobile : Menu déroulant animé depuis le haut
     &.menu-open {
         width: 100%;
         height: 11.75rem;
@@ -100,6 +110,7 @@ header {
         transform-origin: top;
     }
 
+    // Liens de navigation individuels
     .link-page {
         @include link-text;
         color: $third-text-color;
@@ -111,12 +122,14 @@ header {
             }
         }
 
+        // Classe automatiquement ajoutée par 'routerLinkActive' d'Angular
         &.active {
             color: $first-text-color;
         }
     }
 }
 
+// Animation d'apparition du menu mobile (déroulement vers le bas)
 @keyframes menu-appears {
     0% {
         transform: scaleY(0);
